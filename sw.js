@@ -2,7 +2,7 @@
    Garde l'application en mémoire pour qu'elle s'ouvre sans connexion.
    Les données (clients, factures…) ne passent JAMAIS par ici : elles restent
    dans le stockage du navigateur. */
-const CACHE = "efacture-v1";
+const CACHE = "efacture-v2";
 const FILES = [
   "./",
   "./index.html",

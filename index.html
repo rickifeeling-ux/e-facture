@@ -1137,6 +1137,14 @@ body.capture-mode .app {
   margin-top: 10px;
 }
 
+/* WhatsApp */
+
+.btn-whatsapp {
+  background: #16a34a;
+  border-color: #16a34a;
+  color: #fff;
+}
+
 </style>
 </head>
 <body>
@@ -1214,13 +1222,17 @@ const DEFAULT_DATA = {
     taxId: "",
     paymentTerms: "Paiement sous 30 jours",
     taxRate: 18,
-    logo: ""
+    logo: "",
+    rccm: "",
+    mobileMoney: "",
+    bankDetails: ""
   },
   clients: [],
   invoices: [],
   quotes: [],
   payments: [],
-  counters: { invoice: 1, quote: 1 },
+  catalog: [],
+  counters: { invoice: 1, quote: 1, receipt: 1 },
   lastExport: "",
   reminderSnoozeUntil: ""
 };
@@ -1311,6 +1323,7 @@ function normalizeData(data) {
     invoices: onlyObjectsWithId(d.invoices),
     quotes: onlyObjectsWithId(d.quotes),
     payments: onlyObjectsWithId(d.payments),
+    catalog: onlyObjectsWithId(d.catalog),
     counters: { ...base.counters, ...(d.counters || {}) }
   };
 }
@@ -1446,6 +1459,51 @@ async function handleLogoFile(file) {
   } else {
     appData.company.logo = previous;
   }
+}
+
+/* ---------- WhatsApp et petits outils ---------- */
+
+function multiline(text) {
+  return escapeHTML(text).replace(/\r?\n/g, "<br>");
+}
+
+/* Un numéro n'ouvre directement la conversation que s'il commence par + ou 00 (indicatif pays). */
+function waNumber(phone) {
+  const raw = String(phone || "").trim();
+  if (!/^(\+|00)/.test(raw)) return "";
+  const digits = raw.replace(/\D/g, "");
+  const number = raw.startsWith("00") ? digits.slice(2) : digits;
+  return number.length >= 8 ? number : "";
+}
+
+function waLink(phone, text) {
+  return `https://wa.me/${waNumber(phone)}?text=${encodeURIComponent(text)}`;
+}
+
+function openExternal(url) {
+  try {
+    const a = document.createElement("a");
+    a.href = url;
+    a.target = "_blank";
+    a.rel = "noopener";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+  } catch (error) {
+    window.location.href = url;
+  }
+}
+
+function clientPhoneOf(doc) {
+  return (getClient(doc.clientId) || {}).phone || "";
+}
+
+function paymentInfoHTML(company) {
+  if (!company.mobileMoney && !company.bankDetails) return "";
+  const parts = [];
+  if (company.mobileMoney) parts.push(`Mobile Money : ${multiline(company.mobileMoney)}`);
+  if (company.bankDetails) parts.push(`Banque : ${multiline(company.bankDetails)}`);
+  return `<p><strong>Moyens de paiement :</strong><br>${parts.join("<br>")}</p>`;
 }
 
 /* ---------- Installation comme application (PWA) ---------- */
@@ -1804,6 +1862,8 @@ function showDashboard() {
         <button type="button" class="action-button" data-action="newQuote">+ Nouveau devis</button>
         <button type="button" class="action-button" data-action="newClient">+ Nouveau client</button>
         <button type="button" class="action-button" data-action="newPayment">+ Enregistrer un paiement</button>
+        <button type="button" class="action-button" data-action="catalog">Catalogue d'articles</button>
+        <button type="button" class="action-button" data-action="report">Bilan du mois</button>
       </div>
     </section>
 
@@ -1928,7 +1988,7 @@ function showPayments() {
       cell("Client", escapeHTML(inv ? docClientName(inv) : "—")) +
       cell("Montant", money(p.amount)) +
       cell("Moyen", escapeHTML(p.method || "—")) +
-      cell("Actions", btn("Supprimer", "deletePayment", p.id, "btn-danger"), "actions-cell") +
+      cell("Actions", btn("Reçu", "viewReceipt", p.id) + btn("Supprimer", "deletePayment", p.id, "btn-danger"), "actions-cell") +
       "</tr>";
   }).join("");
 
@@ -1960,6 +2020,10 @@ function showSettings() {
         <label>Téléphone<input name="phone" type="tel" value="${escapeHTML(c.phone)}"></label>
         <label>E-mail<input type="email" name="email" value="${escapeHTML(c.email)}"></label>
         <label>Identifiant fiscal<input name="taxId" value="${escapeHTML(c.taxId)}"></label>
+        <label>RCCM (registre du commerce)<input name="rccm" value="${escapeHTML(c.rccm || "")}"></label>
+        <label>Mobile Money (numéros pour être payé)<textarea name="mobileMoney" rows="2" placeholder="Ex. : Airtel Money 077 00 00 00">${escapeHTML(c.mobileMoney || "")}</textarea></label>
+        <label>Compte bancaire (RIB / IBAN)<textarea name="bankDetails" rows="2">${escapeHTML(c.bankDetails || "")}</textarea></label>
+        <p class="muted-text">Ces informations apparaissent sur tes factures. Vérifie avec un comptable les mentions obligatoires de ton activité.</p>
         <label>Taux de taxe par défaut (%)<input name="taxRate" type="number" inputmode="decimal" min="0" max="100" step="0.01" value="${Number(c.taxRate) || 0}"></label>
         <label>Conditions de paiement<textarea name="paymentTerms" rows="3">${escapeHTML(c.paymentTerms)}</textarea></label>
         <button class="primary-button" type="submit">Enregistrer les paramètres</button>
@@ -2097,6 +2161,8 @@ function showDocumentForm(type, docId = null) {
         <input type="hidden" name="type" value="${type}">
         <input type="hidden" name="docId" value="${escapeHTML(existing ? existing.id : "")}">
         <label>Client<select name="clientId" required>${options}</select></label>
+        ${appData.catalog.length ? `<label>Ajouter depuis le catalogue
+          <select name="catalogPick"><option value="">Choisir un article…</option>${[...appData.catalog].sort((a, b) => String(a.name).localeCompare(String(b.name), "fr")).map(item => `<option value="${escapeHTML(item.id)}">${escapeHTML(item.name)} — ${money(item.price)}</option>`).join("")}</select></label>` : ""}
         <h3 class="items-title">Lignes du document</h3>
         <div id="itemsList">${items.map((item, index) => itemRowHTML(index === 0, item)).join("")}</div>
         <button type="button" class="btn" data-action="addItem">+ Ajouter une ligne</button>
@@ -2169,6 +2235,8 @@ const DOC_CSS = `
 .doc-paper table.doc-totals{width:55%;margin-left:auto}
 .doc-grand td{font-size:15px;font-weight:bold;border-top:2px solid #27384a}
 .doc-paper p{margin-top:14px}
+.doc-sign{display:grid;grid-template-columns:1fr 1fr;gap:30px;margin-top:50px}
+.doc-sign div{border-top:1px solid #20252b;padding-top:6px;text-align:center;font-size:12px}
 @media(max-width:520px){.doc-parties{grid-template-columns:1fr}.doc-paper table.doc-totals{width:100%}.doc-paper{padding:12px}}
 `;
 
@@ -2190,6 +2258,7 @@ function documentMarkup(doc, type) {
         ${company.phone ? `<div>Tél. : ${escapeHTML(company.phone)}</div>` : ""}
         ${company.email ? `<div>${escapeHTML(company.email)}</div>` : ""}
         ${company.taxId ? `<div>Identifiant fiscal : ${escapeHTML(company.taxId)}</div>` : ""}
+        ${company.rccm ? `<div>RCCM : ${escapeHTML(company.rccm)}</div>` : ""}
       </div>
       <div>
         <h1>${isInvoice ? "FACTURE" : "DEVIS"}</h1>
@@ -2231,6 +2300,7 @@ function documentMarkup(doc, type) {
       <tr><td>Solde à payer</td><td class="right">${money(balance)}</td></tr>` : ""}
     </table>
     ${doc.notes ? `<p><strong>Notes :</strong><br>${escapeHTML(doc.notes)}</p>` : ""}
+    ${isInvoice && balance > 0 ? paymentInfoHTML(company) : ""}
     <p><strong>Conditions de paiement :</strong><br>${escapeHTML(company.paymentTerms || "À convenir entre les parties.")}</p>
   </article>`;
 }
@@ -2257,7 +2327,7 @@ function showDocumentView(type, id) {
     "Vérifie le document, puis imprime-le ou enregistre-le en PDF.", `
     <div class="doc-toolbar no-print">
       <button type="button" class="primary-button" data-action="printCurrent">🖨 Imprimer / PDF</button>
-      <button type="button" class="btn" data-action="${isInvoice ? "textInvoice" : "textQuote"}" data-id="${escapeHTML(doc.id)}">📋 Copier le texte</button>
+      <button type="button" class="btn" data-action="${isInvoice ? "textInvoice" : "textQuote"}" data-id="${escapeHTML(doc.id)}">📋 Copier / WhatsApp</button>
       <button type="button" class="btn" data-action="captureMode">📱 Mode capture</button>
       <button type="button" class="btn" data-action="${isInvoice ? "downloadInvoice" : "downloadQuote"}" data-id="${escapeHTML(doc.id)}">⬇ Télécharger (HTML)</button>
       ${isInvoice || canConvert ? `<button type="button" class="btn" data-action="${isInvoice ? "editInvoice" : "editQuote"}" data-id="${escapeHTML(doc.id)}">✏ Modifier</button>` : ""}
@@ -2290,7 +2360,8 @@ function documentText(doc, type) {
   const header = [
     c.name || "Mon entreprise",
     c.address, c.phone ? `Tél. : ${c.phone}` : "", c.email,
-    c.taxId ? `Identifiant fiscal : ${c.taxId}` : ""
+    c.taxId ? `Identifiant fiscal : ${c.taxId}` : "",
+    c.rccm ? `RCCM : ${c.rccm}` : ""
   ].filter(Boolean);
   const lines = [
     `${isInvoice ? "FACTURE" : "DEVIS"} ${doc.number}`,
@@ -2307,22 +2378,27 @@ function documentText(doc, type) {
   ];
   if (isInvoice) {
     lines.push(`Déjà payé : ${money(getPaidAmount(doc))}`, `Solde à payer : ${money(getBalance(doc))}`);
+    if (getBalance(doc) > 0) {
+      if (c.mobileMoney) lines.push("", `Paiement Mobile Money : ${c.mobileMoney}`);
+      if (c.bankDetails) lines.push(`Paiement bancaire : ${c.bankDetails}`);
+    }
   }
   if (doc.notes) lines.push("", `Notes : ${doc.notes}`);
   lines.push("", `Conditions : ${c.paymentTerms || "À convenir"}`);
   return lines.filter((line, i) => line !== "" || lines[i - 1] !== "").join("\n");
 }
 
-function showTextDialog(text) {
+function showTextDialog(text, phone) {
   const back = document.createElement("div");
   back.className = "modal-backdrop";
   back.innerHTML = `
     <div class="modal" role="dialog" aria-modal="true">
-      <p>Copie ce texte puis colle-le dans WhatsApp, SMS ou e-mail.</p>
+      <p>Copie ce texte, ou envoie-le directement par WhatsApp.</p>
       <textarea class="text-dialog-area" rows="10" readonly>${escapeHTML(text)}</textarea>
       <div class="modal-actions">
         ${navigator.share ? '<button type="button" class="btn" data-modal="share">Partager</button>' : ""}
         <button type="button" class="btn" data-modal="close">Fermer</button>
+        <button type="button" class="btn btn-whatsapp" data-modal="whatsapp">WhatsApp</button>
         <button type="button" class="btn btn-primary" data-modal="copy">Copier</button>
       </div>
     </div>`;
@@ -2332,6 +2408,13 @@ function showTextDialog(text) {
     if (!target) { if (event.target === back) back.remove(); return; }
     const action = target.dataset.modal;
     if (action === "close") { back.remove(); return; }
+    if (action === "whatsapp") {
+      if (!waNumber(phone)) {
+        showToast("Choisis le contact dans WhatsApp. Astuce : enregistre le numéro du client avec +241… pour l'ouvrir directement.");
+      }
+      openExternal(waLink(phone, text));
+      return;
+    }
     if (action === "share") {
       try { await navigator.share({ text }); } catch (error) { /* annulé */ }
       return;
@@ -2382,19 +2465,371 @@ function downloadFile(filename, content, mime) {
   setTimeout(() => URL.revokeObjectURL(url), 5000);
 }
 
+function standaloneHTML(title, markup) {
+  return `<!DOCTYPE html><html lang="fr"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>${escapeHTML(title)}</title>
+<style>@page{size:A4;margin:14mm}body{margin:0;background:#fff}${DOC_CSS}</style></head>
+<body>${markup}
+<p style="text-align:center"><button onclick="window.print()">Imprimer / Enregistrer en PDF</button></p>
+<style>@media print{button{display:none}}</style></body></html>`;
+}
+
 function downloadDocument(type, id) {
   const doc = findDocument(type, id);
   if (!doc) { showToast("Document introuvable.", "error"); return; }
   const title = type === "invoice" ? "Facture" : "Devis";
-  const html = `<!DOCTYPE html><html lang="fr"><head><meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>${title} ${escapeHTML(doc.number)}</title>
-<style>@page{size:A4;margin:14mm}body{margin:0;background:#fff}${DOC_CSS}</style></head>
-<body>${documentMarkup(doc, type)}
-<p style="text-align:center"><button onclick="window.print()">Imprimer / Enregistrer en PDF</button></p>
-<style>@media print{button{display:none}}</style></body></html>`;
-  downloadFile(`${title}-${doc.number}.html`, html, "text/html;charset=utf-8");
-  showToast("Téléchargement demandé. Si aucun fichier n'apparaît, utilise « Copier le texte » ou « Mode capture ».");
+  downloadFile(`${title}-${doc.number}.html`, standaloneHTML(`${title} ${doc.number}`, documentMarkup(doc, type)), "text/html;charset=utf-8");
+  showToast("Téléchargement demandé. Si aucun fichier n'apparaît, utilise « Copier / WhatsApp » ou « Mode capture ».");
+}
+
+/* ---------- Reçus de paiement ---------- */
+
+function nextReceiptNumber(year = new Date().getFullYear()) {
+  let n = Number(appData.counters.receipt) || 1;
+  let number;
+  do {
+    number = `REC-${year}-${String(n).padStart(4, "0")}`;
+    n += 1;
+  } while (appData.payments.some(p => p.receiptNumber === number));
+  appData.counters.receipt = n;
+  return number;
+}
+
+function paymentYear(payment) {
+  const d = parseDate(payment.date);
+  return d ? d.getFullYear() : new Date().getFullYear();
+}
+
+function ensureReceiptNumber(payment) {
+  if (!payment.receiptNumber) {
+    payment.receiptNumber = nextReceiptNumber(paymentYear(payment));
+    saveData();
+  }
+  return payment.receiptNumber;
+}
+
+/* Les paiements anciens reçoivent un numéro de reçu, dans l'ordre chronologique. */
+function ensureAllReceiptNumbers() {
+  const missing = appData.payments
+    .filter(p => !p.receiptNumber)
+    .sort((a, b) => String(a.date).localeCompare(String(b.date)) || String(a.createdAt || "").localeCompare(String(b.createdAt || "")));
+  if (!missing.length) return false;
+  missing.forEach(p => { p.receiptNumber = nextReceiptNumber(paymentYear(p)); });
+  return true;
+}
+
+function receiptContext(payment) {
+  const invoice = appData.invoices.find(i => i.id === payment.invoiceId) || null;
+  const siblings = appData.payments
+    .filter(x => x.invoiceId === payment.invoiceId)
+    .sort((a, b) => String(a.date).localeCompare(String(b.date)) || String(a.createdAt || "").localeCompare(String(b.createdAt || "")));
+  const index = siblings.findIndex(x => x.id === payment.id);
+  const paidToDate = siblings.slice(0, index + 1).reduce((sum, x) => sum + (Number(x.amount) || 0), 0);
+  const total = invoice ? getDocumentTotal(invoice) : 0;
+  return {
+    invoice,
+    total,
+    paidToDate,
+    balanceAfter: Math.max(0, total - paidToDate),
+    client: invoice ? (getClient(invoice.clientId) || {}) : {},
+    clientName: invoice ? docClientName(invoice) : "Client"
+  };
+}
+
+function receiptMarkup(payment) {
+  const company = appData.company;
+  const ctx = receiptContext(payment);
+  const detail = [payment.method, payment.reference].filter(Boolean).join(" — ");
+  return `<article class="doc-paper">
+    <div class="doc-top">
+      <div>
+        ${safeLogo(company.logo) ? `<img class="doc-logo" src="${escapeHTML(company.logo)}" alt="Logo">` : ""}
+        <h2>${escapeHTML(company.name || "Mon entreprise")}</h2>
+        ${company.address ? `<div>${escapeHTML(company.address)}</div>` : ""}
+        ${company.phone ? `<div>Tél. : ${escapeHTML(company.phone)}</div>` : ""}
+        ${company.email ? `<div>${escapeHTML(company.email)}</div>` : ""}
+        ${company.taxId ? `<div>Identifiant fiscal : ${escapeHTML(company.taxId)}</div>` : ""}
+        ${company.rccm ? `<div>RCCM : ${escapeHTML(company.rccm)}</div>` : ""}
+      </div>
+      <div>
+        <h1>REÇU</h1>
+        <strong>${escapeHTML(payment.receiptNumber)}</strong>
+        <div>Date : ${formatDate(payment.date)}</div>
+      </div>
+    </div>
+    <hr class="doc-rule">
+    <div class="doc-parties">
+      <div>
+        <h2>Reçu de</h2>
+        <strong>${escapeHTML(ctx.clientName)}</strong>
+        ${ctx.client.phone ? `<div>${escapeHTML(ctx.client.phone)}</div>` : ""}
+      </div>
+      <div>
+        <h2>Facture concernée</h2>
+        <div>${ctx.invoice ? escapeHTML(ctx.invoice.number) : "Facture supprimée"}</div>
+        ${ctx.invoice ? `<div>Total de la facture : ${money(ctx.total)}</div>` : ""}
+      </div>
+    </div>
+    <table>
+      <thead><tr><th>Désignation</th><th class="right">Montant</th></tr></thead>
+      <tbody><tr>
+        <td>Paiement${ctx.invoice ? ` sur la facture ${escapeHTML(ctx.invoice.number)}` : ""}${detail ? `<br><span>${escapeHTML(detail)}</span>` : ""}</td>
+        <td class="right">${money(payment.amount)}</td>
+      </tr></tbody>
+    </table>
+    <table class="doc-totals">
+      <tr class="doc-grand"><td>Montant reçu</td><td class="right">${money(payment.amount)}</td></tr>
+      <tr><td>Total déjà payé</td><td class="right">${money(ctx.paidToDate)}</td></tr>
+      <tr><td>Solde restant</td><td class="right">${money(ctx.balanceAfter)}</td></tr>
+    </table>
+    <div class="doc-sign"><div>Signature du client</div><div>Cachet et signature</div></div>
+  </article>`;
+}
+
+function receiptText(payment) {
+  const c = appData.company;
+  const ctx = receiptContext(payment);
+  const lines = [
+    `REÇU ${payment.receiptNumber}`,
+    c.name || "Mon entreprise",
+    c.phone ? `Tél. : ${c.phone}` : "",
+    "",
+    `Date : ${formatDate(payment.date)}`,
+    `Reçu de : ${ctx.clientName}`,
+    ctx.invoice ? `Facture : ${ctx.invoice.number} (total ${money(ctx.total)})` : "",
+    `MONTANT REÇU : ${money(payment.amount)}`,
+    [payment.method, payment.reference].filter(Boolean).join(" — ") ? `Paiement : ${[payment.method, payment.reference].filter(Boolean).join(" — ")}` : "",
+    `Total déjà payé : ${money(ctx.paidToDate)}`,
+    `Solde restant : ${money(ctx.balanceAfter)}`,
+    "",
+    "Merci pour votre confiance."
+  ];
+  return lines.filter((line, i) => line !== "" || (i > 0 && lines[i - 1] !== "")).join("\n");
+}
+
+function showReceiptView(id) {
+  const payment = appData.payments.find(x => x.id === id);
+  if (!payment) { showToast("Paiement introuvable.", "error"); showPayments(); return; }
+  ensureReceiptNumber(payment);
+  setView("receipt:" + id, "detail", () => showReceiptView(id));
+  currentPage = "payments";
+  renderPage(`Reçu ${payment.receiptNumber}`, "Remets ce reçu au client : imprime-le ou envoie-le.", `
+    <div class="doc-toolbar no-print">
+      <button type="button" class="primary-button" data-action="printCurrent">🖨 Imprimer / PDF</button>
+      <button type="button" class="btn" data-action="textReceipt" data-id="${escapeHTML(payment.id)}">📋 Copier / WhatsApp</button>
+      <button type="button" class="btn" data-action="captureMode">📱 Mode capture</button>
+      <button type="button" class="btn" data-action="downloadReceipt" data-id="${escapeHTML(payment.id)}">⬇ Télécharger (HTML)</button>
+      <button type="button" class="btn" data-action="payments">← Retour</button>
+    </div>
+    <style>${DOC_CSS}</style>
+    ${receiptMarkup(payment)}`);
+}
+
+function downloadReceipt(id) {
+  const payment = appData.payments.find(x => x.id === id);
+  if (!payment) { showToast("Paiement introuvable.", "error"); return; }
+  ensureReceiptNumber(payment);
+  downloadFile(`Recu-${payment.receiptNumber}.html`, standaloneHTML(`Reçu ${payment.receiptNumber}`, receiptMarkup(payment)), "text/html;charset=utf-8");
+  showToast("Téléchargement demandé. Si aucun fichier n'apparaît, utilise « Copier / WhatsApp » ou « Mode capture ».");
+}
+
+/* ---------- Catalogue d'articles ---------- */
+
+function showCatalog() {
+  setView("catalog", "detail", () => showCatalog());
+  currentPage = "catalog";
+  const list = [...appData.catalog].sort((a, b) => String(a.name).localeCompare(String(b.name), "fr"));
+  const rows = list.map(item => "<tr>" +
+    cell("Désignation", escapeHTML(item.name)) +
+    cell("Prix", money(item.price)) +
+    cell("Actions", btn("Modifier", "editCatalogItem", item.id) + btn("Supprimer", "deleteCatalogItem", item.id, "btn-danger"), "actions-cell") +
+    "</tr>").join("");
+  renderPage("Catalogue", "Tes articles et services habituels, à ajouter en un appui sur une facture ou un devis.", `
+    <section class="panel">
+      <div class="panel-heading"><h3>Articles (${list.length})</h3>
+        <button type="button" class="primary-button" data-action="newCatalogItem">+ Ajouter un article</button></div>
+      ${list.length
+        ? dataTable(["Désignation", "Prix", "Actions"], rows)
+        : `<p class="empty-state">Aucun article. Ajoute par exemple « Peinture salon » avec son prix.</p>`}
+    </section>`);
+}
+
+function showCatalogForm(id = null) {
+  setView("form:catalog:" + (id || "new"), "form", () => showCatalogForm(id));
+  currentPage = "catalog";
+  const item = id ? appData.catalog.find(x => x.id === id) : null;
+  if (id && !item) { showToast("Article introuvable.", "error"); showCatalog(); return; }
+  renderPage(item ? "Modifier l'article" : "Nouvel article", "Nom et prix habituel.", `
+    <section class="panel">
+      <form data-form="catalog" class="app-form">
+        <input type="hidden" name="catalogId" value="${escapeHTML(item ? item.id : "")}">
+        <label>Désignation<input name="name" required value="${escapeHTML(item ? item.name : "")}" placeholder="Ex. : peinture du salon"></label>
+        <label>Prix unitaire (FCFA)<input name="price" type="number" inputmode="numeric" min="0" step="1" required value="${escapeHTML(item ? item.price : "")}"></label>
+        <div class="form-actions">
+          <button type="submit" class="primary-button">Enregistrer</button>
+          <button type="button" class="btn" data-action="catalog">Annuler</button>
+        </div>
+      </form>
+    </section>`);
+}
+
+function handleCatalogSubmit(form) {
+  const v = Object.fromEntries(new FormData(form).entries());
+  const name = String(v.name || "").trim();
+  const price = Math.round(Number(v.price));
+  if (!name) { showToast("La désignation est obligatoire.", "error"); return; }
+  if (v.price === "" || !Number.isFinite(price) || price < 0) { showToast("Le prix doit être un nombre positif.", "error"); return; }
+  const existing = v.catalogId ? appData.catalog.find(x => x.id === v.catalogId) : null;
+  if (existing) { existing.name = name; existing.price = price; }
+  else appData.catalog.push({ id: uid(), name, price });
+  if (saveData()) { showCatalog(); showToast(existing ? "Article modifié." : "Article ajouté."); }
+}
+
+async function deleteCatalogItem(id) {
+  const item = appData.catalog.find(x => x.id === id);
+  if (!item) return;
+  if (!(await askConfirm(`Supprimer « ${item.name} » du catalogue ? Les factures déjà créées ne changent pas.`, "Supprimer", true))) return;
+  appData.catalog = appData.catalog.filter(x => x.id !== id);
+  if (saveData()) { showCatalog(); showToast("Article supprimé."); }
+}
+
+/* ---------- Bilan mensuel et exportation pour le comptable ---------- */
+
+let reportMonth = "";
+
+function monthOf(value) {
+  const d = parseDate(value);
+  return d ? toInputDate(d).slice(0, 7) : "";
+}
+
+function monthLabel(month) {
+  const [y, m] = month.split("-").map(Number);
+  return new Date(y, m - 1, 1).toLocaleDateString("fr-FR", { month: "long", year: "numeric" });
+}
+
+function sumBy(list, keyFn, valueFn) {
+  const map = new Map();
+  list.forEach(item => {
+    const key = keyFn(item);
+    map.set(key, (map.get(key) || 0) + valueFn(item));
+  });
+  return [...map.entries()].sort((a, b) => b[1] - a[1]);
+}
+
+function reportData(month) {
+  const invoices = appData.invoices.filter(i => monthOf(i.createdAt) === month);
+  const payments = appData.payments.filter(p => monthOf(p.date) === month);
+  const late = appData.invoices.filter(isOverdue);
+  return {
+    invoices,
+    payments,
+    billed: invoices.reduce((sum, i) => sum + getDocumentTotal(i), 0),
+    received: payments.reduce((sum, p) => sum + (Number(p.amount) || 0), 0),
+    newClients: appData.clients.filter(c => monthOf(c.createdAt) === month).length,
+    quotes: appData.quotes.filter(q => monthOf(q.createdAt) === month).length,
+    topClients: sumBy(invoices, docClientName, getDocumentTotal).slice(0, 5),
+    methods: sumBy(payments, p => p.method || "Autre", p => Number(p.amount) || 0),
+    outstanding: appData.invoices.reduce((sum, i) => sum + getBalance(i), 0),
+    lateAmount: late.reduce((sum, i) => sum + getBalance(i), 0),
+    lateCount: late.length
+  };
+}
+
+function showReport() {
+  setView("report", "detail", () => showReport());
+  currentPage = "report";
+  if (!reportMonth) reportMonth = today().slice(0, 7);
+  const r = reportData(reportMonth);
+  const topRows = r.topClients.map(([name, amount]) => "<tr>" + cell("Client", escapeHTML(name)) + cell("Facturé", money(amount)) + "</tr>").join("");
+  const methodRows = r.methods.map(([name, amount]) => "<tr>" + cell("Moyen", escapeHTML(name)) + cell("Encaissé", money(amount)) + "</tr>").join("");
+  renderPage("Bilan du mois", "Un résumé de ton activité, à garder ou à donner à ton comptable.", `
+    <section class="panel">
+      <label class="app-form">Mois
+        <input type="month" id="reportMonth" value="${escapeHTML(reportMonth)}">
+      </label>
+      <p class="muted-text"><strong>${escapeHTML(monthLabel(reportMonth))}</strong></p>
+    </section>
+    <div class="stats-grid">
+      ${statCard("▤", "blue", "Facturé", money(r.billed), `${r.invoices.length} facture${r.invoices.length > 1 ? "s" : ""} ce mois`)}
+      ${statCard("✓", "green", "Encaissé", money(r.received), `${r.payments.length} paiement${r.payments.length > 1 ? "s" : ""} ce mois`)}
+      ${statCard("♧", "purple", "Nouveaux clients", r.newClients, "Ajoutés ce mois")}
+      ${statCard("◷", "orange", "À recevoir", money(r.outstanding), r.lateCount ? `dont ${money(r.lateAmount)} en retard` : "Aucun retard")}
+    </div>
+    <section class="panel">
+      <div class="panel-heading"><h3>Meilleurs clients du mois</h3></div>
+      ${r.topClients.length ? dataTable(["Client", "Facturé"], topRows) : `<p class="empty-state">Aucune facture ce mois-ci.</p>`}
+    </section>
+    <section class="panel">
+      <div class="panel-heading"><h3>Encaissements par moyen de paiement</h3></div>
+      ${r.methods.length ? dataTable(["Moyen", "Encaissé"], methodRows) : `<p class="empty-state">Aucun paiement ce mois-ci.</p>`}
+    </section>
+    <section class="panel">
+      <div class="panel-heading"><h3>Exporter pour le comptable</h3></div>
+      <p class="muted-text">Fichiers CSV, lisibles dans Excel ou Google Sheets. Si le téléchargement ne démarre pas, utilise « Copier le bilan ».</p>
+      <div class="quick-actions">
+        <button type="button" class="action-button" data-action="exportInvoicesCsv">Factures du mois (CSV)</button>
+        <button type="button" class="action-button" data-action="exportPaymentsCsv">Paiements du mois (CSV)</button>
+        <button type="button" class="action-button" data-action="copyReport">Copier le bilan</button>
+      </div>
+    </section>`);
+}
+
+function reportText(month) {
+  const r = reportData(month);
+  const lines = [
+    `BILAN — ${monthLabel(month).toUpperCase()}`,
+    appData.company.name || "",
+    "",
+    `Factures émises : ${r.invoices.length} pour ${money(r.billed)}`,
+    `Paiements reçus : ${r.payments.length} pour ${money(r.received)}`,
+    `Nouveaux clients : ${r.newClients}`,
+    `Devis créés : ${r.quotes}`,
+    `Reste à recevoir (toutes factures) : ${money(r.outstanding)}${r.lateCount ? ` dont ${money(r.lateAmount)} en retard` : ""}`
+  ];
+  if (r.topClients.length) {
+    lines.push("", "Meilleurs clients :");
+    r.topClients.forEach(([name, amount]) => lines.push(`- ${name} : ${money(amount)}`));
+  }
+  if (r.methods.length) {
+    lines.push("", "Encaissements par moyen :");
+    r.methods.forEach(([name, amount]) => lines.push(`- ${name} : ${money(amount)}`));
+  }
+  return lines.filter((line, i) => line !== "" || (i > 0 && lines[i - 1] !== "")).join("\n");
+}
+
+/* Séparateur « ; » et BOM : s'ouvre correctement dans Excel en français. */
+function csvCell(value) {
+  if (typeof value === "number") return String(value);
+  let text = String(value ?? "");
+  if (/^[=+\-@]/.test(text)) text = "'" + text; // évite qu'un tableur prenne un texte pour une formule
+  return /[;"\n\r]/.test(text) ? `"${text.replace(/"/g, '""')}"` : text;
+}
+
+function toCsv(rows) {
+  return "\uFEFF" + rows.map(row => row.map(csvCell).join(";")).join("\r\n");
+}
+
+function exportInvoicesCsv() {
+  const month = reportMonth || today().slice(0, 7);
+  const rows = [["Numéro", "Date", "Client", "Description", "Total HT", "Taxe", "Total TTC", "Payé", "Solde", "Statut"]];
+  reportData(month).invoices.forEach(i => rows.push([
+    i.number, formatDate(i.createdAt), docClientName(i), i.description || "",
+    Number(i.subtotal) || 0, Number(i.tax) || 0, getDocumentTotal(i), getPaidAmount(i), getBalance(i), getInvoiceStatus(i)
+  ]));
+  downloadFile(`e-facture-factures-${month}.csv`, toCsv(rows), "text/csv;charset=utf-8");
+  showToast("Export demandé. Si aucun fichier n'apparaît, utilise « Copier le bilan ».");
+}
+
+function exportPaymentsCsv() {
+  const month = reportMonth || today().slice(0, 7);
+  const rows = [["Date", "Reçu", "Facture", "Client", "Montant", "Moyen", "Référence"]];
+  reportData(month).payments.forEach(p => {
+    const ctx = receiptContext(p);
+    rows.push([formatDate(p.date), p.receiptNumber || "", ctx.invoice ? ctx.invoice.number : "", ctx.clientName, Number(p.amount) || 0, p.method || "", p.reference || ""]);
+  });
+  downloadFile(`e-facture-paiements-${month}.csv`, toCsv(rows), "text/csv;charset=utf-8");
+  showToast("Export demandé. Si aucun fichier n'apparaît, utilise « Copier le bilan ».");
 }
 
 /* ---------- Enregistrement des formulaires ---------- */
@@ -2503,6 +2938,7 @@ function handlePaymentSubmit(form) {
   }
   appData.payments.push({
     id: uid(),
+    receiptNumber: nextReceiptNumber(paymentYear({ date: v.date || today() })),
     invoiceId: invoice.id,
     amount,
     date: v.date || today(),
@@ -2527,6 +2963,9 @@ function handleSettingsSubmit(form) {
     email: String(v.email || "").trim(),
     taxId: String(v.taxId || "").trim(),
     taxRate: rate,
+    rccm: String(v.rccm || "").trim(),
+    mobileMoney: String(v.mobileMoney || "").trim(),
+    bankDetails: String(v.bankDetails || "").trim(),
     paymentTerms: String(v.paymentTerms || "").trim()
   };
   if (saveData()) { showSettings(); showToast("Paramètres enregistrés."); }
@@ -2653,6 +3092,7 @@ async function restoreFromText(text) {
   if (!valid) { showToast("Format invalide : sauvegarde E-facture attendue.", "error"); return; }
   if (!(await askConfirm("Cette restauration remplace toutes les données actuelles. Continuer ?", "Remplacer", true))) return;
   appData = normalizeData(data);
+  ensureAllReceiptNumbers();
   if (saveData()) { showDashboard(); showToast("Sauvegarde restaurée."); }
 }
 
@@ -2676,7 +3116,10 @@ const ROUTES = {
   newClient: () => showClientForm(),
   newInvoice: () => showDocumentForm("invoice"),
   newQuote: () => showDocumentForm("quote"),
-  newPayment: () => showPaymentForm()
+  newPayment: () => showPaymentForm(),
+  catalog: () => showCatalog(),
+  newCatalogItem: () => showCatalogForm(),
+  report: () => showReport()
 };
 
 function handleAction(action, id, button) {
@@ -2685,6 +3128,14 @@ function handleAction(action, id, button) {
     case "newPaymentForInvoice": showPaymentForm(id); break;
     case "editClient": showClientForm(id); break;
     case "installApp": installApp(); break;
+    case "editCatalogItem": showCatalogForm(id); break;
+    case "deleteCatalogItem": deleteCatalogItem(id); break;
+    case "viewReceipt": showReceiptView(id); break;
+    case "textReceipt": { const pay = appData.payments.find(x => x.id === id); if (pay) showTextDialog(receiptText(pay), receiptContext(pay).client.phone); break; }
+    case "downloadReceipt": downloadReceipt(id); break;
+    case "exportInvoicesCsv": exportInvoicesCsv(); break;
+    case "exportPaymentsCsv": exportPaymentsCsv(); break;
+    case "copyReport": showTextDialog(reportText(reportMonth || today().slice(0, 7)), ""); break;
     case "snoozeBackup":
       appData.reminderSnoozeUntil = addDays(1);
       if (saveData()) { showDashboard(); showToast("Rappel reporté à demain."); }
@@ -2696,7 +3147,7 @@ function handleAction(action, id, button) {
       break;
     case "filterInvoices": invoiceFilter = id || "all"; showInvoices(); break;
     case "showLate": invoiceFilter = "late"; showInvoices(); break;
-    case "remindInvoice": { const inv = findDocument("invoice", id); if (inv) showTextDialog(reminderText(inv)); break; }
+    case "remindInvoice": { const inv = findDocument("invoice", id); if (inv) showTextDialog(reminderText(inv), clientPhoneOf(inv)); break; }
     case "editInvoice": showDocumentForm("invoice", id); break;
     case "editQuote": {
       const q = findDocument("quote", id);
@@ -2736,8 +3187,8 @@ function handleAction(action, id, button) {
       break;
     }
     case "printCurrent": printCurrent(); break;
-    case "textInvoice": { const d = findDocument("invoice", id); if (d) showTextDialog(documentText(d, "invoice")); break; }
-    case "textQuote": { const d = findDocument("quote", id); if (d) showTextDialog(documentText(d, "quote")); break; }
+    case "textInvoice": { const d = findDocument("invoice", id); if (d) showTextDialog(`Bonjour ${docClientName(d)},\nVoici votre facture :\n\n${documentText(d, "invoice")}`, clientPhoneOf(d)); break; }
+    case "textQuote": { const d = findDocument("quote", id); if (d) showTextDialog(`Bonjour ${docClientName(d)},\nVoici votre devis :\n\n${documentText(d, "quote")}`, clientPhoneOf(d)); break; }
     case "captureMode": enterCaptureMode(); break;
     case "exitCapture": exitCaptureMode(); break;
     case "convertQuote": convertQuote(id); break;
@@ -2768,6 +3219,7 @@ document.addEventListener("submit", event => {
   else if (kind === "document") handleDocumentSubmit(form);
   else if (kind === "payment") handlePaymentSubmit(form);
   else if (kind === "settings") handleSettingsSubmit(form);
+  else if (kind === "catalog") handleCatalogSubmit(form);
 });
 
 document.addEventListener("input", event => {
@@ -2777,6 +3229,31 @@ document.addEventListener("input", event => {
 
 document.addEventListener("change", event => {
   const target = event.target;
+  if (target.name === "catalogPick") {
+    const item = appData.catalog.find(x => x.id === target.value);
+    const form = target.form;
+    const list = document.getElementById("itemsList");
+    if (item && form && list) {
+      const rows = [...list.querySelectorAll(".item-row")];
+      const last = rows[rows.length - 1];
+      const lastEmpty = last && !last.querySelector('[name="itemDescription"]').value.trim() && last.querySelector('[name="itemPrice"]').value === "";
+      if (lastEmpty) {
+        last.querySelector('[name="itemDescription"]').value = item.name;
+        last.querySelector('[name="itemQty"]').value = "1";
+        last.querySelector('[name="itemPrice"]').value = String(item.price);
+      } else {
+        list.insertAdjacentHTML("beforeend", itemRowHTML(false, { description: item.name, qty: 1, price: item.price }));
+      }
+      updateTotalPreview(form);
+    }
+    target.value = "";
+    return;
+  }
+  if (target.id === "reportMonth") {
+    if (/^\d{4}-\d{2}$/.test(target.value)) reportMonth = target.value;
+    showReport();
+    return;
+  }
   if (target.id === "logoFile") {
     handleLogoFile(target.files && target.files[0]);
     target.value = "";
@@ -2805,6 +3282,7 @@ window.addEventListener("unhandledrejection", event => {
 });
 
 function startApp() {
+  if (ensureAllReceiptNumbers()) saveData();
   showDashboard();
   registerServiceWorker();
 }
