@@ -1,0 +1,2820 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#111827">
+  <meta name="description" content="E-facture, votre outil de gestion commerciale et de facturation.">
+  <title>E-facture | Gestion commerciale</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" type="image/png" href="icon-192.png">
+  <link rel="apple-touch-icon" href="icon-180.png">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="E-facture">
+  <style>
+/* =====================================
+   E-FACTURE — DESIGN PROFESSIONNEL
+   ===================================== */
+
+:root {
+  --primary: #2563eb;
+  --primary-dark: #1d4ed8;
+  --primary-light: #eff6ff;
+  --background: #f5f7fb;
+  --surface: #ffffff;
+  --text: #111827;
+  --muted: #6b7280;
+  --border: #e5e7eb;
+  --green: #059669;
+  --orange: #d97706;
+  --purple: #7c3aed;
+  --radius: 18px;
+  --shadow: 0 6px 24px rgba(15, 23, 42, 0.05);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Roboto, Arial, sans-serif;
+  background: var(--background);
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-tap-highlight-color: transparent;
+}
+
+button {
+  font: inherit;
+  cursor: pointer;
+  border: none;
+  -webkit-appearance: none;
+}
+
+button:focus-visible {
+  outline: 3px solid #93c5fd;
+  outline-offset: 3px;
+}
+
+.app {
+  width: 100%;
+  max-width: 1100px;
+  min-height: 100vh;
+  min-height: 100dvh;
+  margin: 0 auto;
+  padding-bottom: 95px;
+}
+
+/* EN-TÊTE */
+
+.topbar {
+  min-height: 76px;
+  background: var(--surface);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 22px;
+  border-bottom: 1px solid var(--border);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.brand-icon {
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border-radius: 14px;
+  color: white;
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  font-size: 25px;
+  font-weight: 800;
+  box-shadow: 0 5px 12px rgba(37, 99, 235, 0.2);
+}
+
+.brand h1 {
+  font-size: 19px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+}
+
+.brand p {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.profile-button {
+  width: 42px;
+  height: 42px;
+  border-radius: 14px;
+  background: var(--background);
+  font-size: 20px;
+}
+
+/* CONTENU PRINCIPAL */
+
+.main-content {
+  padding: 25px 22px;
+}
+
+.welcome {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.eyebrow {
+  color: var(--primary);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  margin-bottom: 6px;
+}
+
+.welcome h2 {
+  font-size: clamp(23px, 5vw, 30px);
+  letter-spacing: -1px;
+  line-height: 1.2;
+  margin-bottom: 7px;
+}
+
+.welcome > div > p:last-child {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.date-label {
+  color: var(--muted);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 7px 10px;
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+/* ACTIONS RAPIDES */
+
+.quick-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 30px;
+}
+
+.action-card {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  min-height: 82px;
+  padding: 14px;
+  border-radius: 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  text-align: left;
+  color: var(--text);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.action-card:active,
+.tool-card:active,
+.button-primary:active {
+  transform: scale(0.98);
+}
+
+.primary-action {
+  color: white;
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  border-color: transparent;
+}
+
+.action-icon {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  flex-shrink: 0;
+  border-radius: 12px;
+  font-size: 23px;
+  background: var(--primary-light);
+  color: var(--primary);
+}
+
+.primary-action .action-icon {
+  background: rgba(255, 255, 255, 0.17);
+  color: white;
+}
+
+.action-card strong,
+.action-card small {
+  display: block;
+}
+
+.action-card strong {
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.action-card small {
+  font-size: 10px;
+  margin-top: 4px;
+  opacity: 0.8;
+}
+
+/* SECTIONS */
+
+.section {
+  margin-bottom: 30px;
+}
+
+.section-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.section-heading h3 {
+  font-size: 19px;
+  letter-spacing: -0.5px;
+}
+
+.period-badge {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  padding: 6px 10px;
+  border-radius: 9px;
+  color: var(--muted);
+  font-size: 10px;
+}
+
+/* CARTES FINANCIÈRES */
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.stat-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  min-width: 0;
+  box-shadow: var(--shadow);
+}
+
+.stat-top {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-bottom: 16px;
+}
+
+.stat-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 11px;
+  display: grid;
+  place-items: center;
+  font-size: 17px;
+  font-weight: 700;
+}
+
+.stat-icon.blue {
+  color: var(--primary);
+  background: #eff6ff;
+}
+
+.stat-icon.green {
+  color: var(--green);
+  background: #ecfdf5;
+}
+
+.stat-icon.orange {
+  color: var(--orange);
+  background: #fffbeb;
+}
+
+.stat-icon.purple {
+  color: var(--purple);
+  background: #f5f3ff;
+}
+
+.stat-label {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.stat-value {
+  display: block;
+  font-size: clamp(19px, 4.8vw, 26px);
+  font-weight: 800;
+  letter-spacing: -0.8px;
+  overflow-wrap: anywhere;
+  line-height: 1.3;
+}
+
+.stat-card > p {
+  margin-top: 6px;
+  font-size: 10px;
+  color: var(--muted);
+}
+
+/* PANNEAUX */
+
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+.empty-state {
+  padding: 32px 18px;
+  text-align: center;
+}
+
+.empty-icon {
+  width: 60px;
+  height: 60px;
+  display: grid;
+  place-items: center;
+  border-radius: 20px;
+  background: var(--primary-light);
+  font-size: 27px;
+  margin: 0 auto 15px;
+}
+
+.empty-state h4 {
+  font-size: 15px;
+  margin-bottom: 7px;
+}
+
+.empty-state p {
+  color: var(--muted);
+  font-size: 12px;
+  margin-bottom: 18px;
+}
+
+.button-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 43px;
+  padding: 11px 18px;
+  color: white;
+  background: var(--primary);
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 700;
+  transition: background 0.15s ease;
+}
+
+.button-primary:hover {
+  background: var(--primary-dark);
+}
+
+.text-button {
+  background: transparent;
+  color: var(--primary);
+  font-weight: 700;
+  font-size: 12px;
+  padding: 8px 0 8px 8px;
+}
+
+/* OUTILS */
+
+.tools-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.tool-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-height: 125px;
+  padding: 16px;
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  text-align: left;
+  transition: transform 0.15s ease;
+}
+
+.tool-icon {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  background: var(--primary-light);
+  font-size: 19px;
+  margin-bottom: 12px;
+}
+
+.tool-card strong {
+  font-size: 13px;
+}
+
+.tool-card small {
+  color: var(--muted);
+  font-size: 11px;
+  margin-top: 4px;
+}
+
+/* NAVIGATION BASSE */
+
+.bottom-nav {
+  position: fixed;
+  z-index: 100;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 1100px;
+  min-height: 72px;
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  align-items: center;
+  padding: 8px 6px max(8px, env(safe-area-inset-bottom));
+  background: rgba(255, 255, 255, 0.97);
+  border-top: 1px solid var(--border);
+  backdrop-filter: blur(12px);
+}
+
+.nav-item {
+  min-width: 0;
+  min-height: 53px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  color: #9ca3af;
+  background: transparent;
+  border-radius: 12px;
+}
+
+.nav-item span {
+  font-size: 21px;
+  line-height: 1.2;
+}
+
+.nav-item small {
+  font-size: 9px;
+  font-weight: 600;
+}
+
+.nav-item.active {
+  color: var(--primary);
+  background: var(--primary-light);
+}
+
+/* RESPONSIVE : PETITS ÉCRANS */
+
+@media (max-width: 380px) {
+  .topbar {
+    padding: 12px 15px;
+  }
+
+  .main-content {
+    padding: 20px 14px;
+  }
+
+  .welcome {
+    flex-direction: column;
+  }
+
+  .date-label {
+    align-self: flex-start;
+  }
+
+  .action-card {
+    padding: 10px;
+    gap: 7px;
+  }
+
+  .action-icon {
+    width: 32px;
+    height: 32px;
+  }
+
+  .stat-card {
+    padding: 12px;
+  }
+
+  .stat-top {
+    gap: 6px;
+  }
+
+  .stat-value {
+    font-size: 19px;
+  }
+
+  .tool-card {
+    padding: 13px;
+  }
+}
+
+/* TABLETTES ET ORDINATEURS */
+
+@media (min-width: 700px) {
+  .main-content {
+    padding: 32px;
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .tools-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .quick-actions {
+    max-width: 620px;
+  }
+
+  .action-card {
+    padding: 18px;
+  }
+
+  .stat-card {
+    padding: 22px;
+  }
+
+  .bottom-nav {
+    padding-left: 40px;
+    padding-right: 40px;
+  }
+}
+
+/* ACCESSIBILITÉ */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}
+
+
+/* =====================================================
+   COMPOSANTS GÉNÉRÉS PAR script.js
+   (pages, formulaires, tableaux, boutons, messages)
+   ===================================================== */
+
+.page-heading {
+  margin-bottom: 16px;
+}
+
+.page-heading h2 {
+  font-size: clamp(22px, 5vw, 28px);
+  font-weight: 800;
+  letter-spacing: -0.5px;
+}
+
+.page-heading p {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.panel {
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.panel > h3,
+.panel-heading h3 {
+  font-size: 16px;
+  margin-bottom: 4px;
+}
+
+.panel-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.stats-grid {
+  margin-bottom: 16px;
+}
+
+.muted-text {
+  color: var(--muted);
+  font-size: 12px;
+  margin: 6px 0;
+}
+
+.alert-box {
+  background: #fffbeb;
+  border: 1px solid #fcd34d;
+  color: #92400e;
+  border-radius: 12px;
+  padding: 12px 14px;
+  margin-bottom: 14px;
+  font-size: 13px;
+}
+
+/* Boutons */
+
+.btn,
+.primary-button,
+.action-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 44px;
+  padding: 10px 16px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.2;
+  text-align: center;
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+
+.primary-button,
+.btn-primary {
+  background: var(--primary);
+  color: #fff;
+  border-color: var(--primary);
+}
+
+.primary-button:active,
+.btn-primary:active {
+  background: var(--primary-dark);
+}
+
+.action-button {
+  background: var(--primary-light);
+  color: var(--primary);
+  border-color: #bfdbfe;
+}
+
+.btn-small {
+  min-height: 40px;
+  padding: 8px 12px;
+  font-size: 13px;
+}
+
+.btn-danger {
+  color: #b91c1c;
+  border-color: #fecaca;
+  background: #fef2f2;
+}
+
+.btn-danger-solid {
+  background: #dc2626;
+  color: #fff;
+  border-color: #dc2626;
+}
+
+.panel > .quick-actions {
+  margin-bottom: 12px;
+}
+
+/* Formulaires */
+
+.app-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 12px;
+}
+
+.app-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-weight: 700;
+  font-size: 13px;
+}
+
+.app-form input,
+.app-form select,
+.app-form textarea,
+label.app-form textarea {
+  width: 100%;
+  min-height: 46px;
+  padding: 10px 12px;
+  font: inherit;
+  font-size: 16px;
+  font-weight: 400;
+  color: var(--text);
+  background: #fff;
+  border: 1px solid #cbd5e1;
+  border-radius: 12px;
+}
+
+.app-form textarea,
+label.app-form textarea {
+  resize: vertical;
+}
+
+.app-form input:focus,
+.app-form select:focus,
+.app-form textarea:focus {
+  outline: 3px solid #bfdbfe;
+  border-color: var(--primary);
+}
+
+.form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.form-actions .primary-button {
+  flex: 1 1 180px;
+}
+
+.total-preview {
+  background: var(--primary-light);
+  color: var(--primary-dark);
+  border-radius: 12px;
+  padding: 12px 14px;
+  font-weight: 800;
+}
+
+/* Tableaux */
+
+.table-wrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.data-table th {
+  text-align: left;
+  font-size: 12px;
+  color: var(--muted);
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+
+.data-table td {
+  padding: 12px 10px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: middle;
+}
+
+.actions-cell {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.status {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.status.paid { color: #047857; background: #d1fae5; }
+.status.pending { color: #b45309; background: #fef3c7; }
+.status.unpaid { color: #b91c1c; background: #fee2e2; }
+
+.empty-state {
+  padding: 24px 10px;
+  text-align: center;
+  color: var(--muted);
+}
+
+/* Sur téléphone : chaque ligne devient une carte lisible */
+@media (max-width: 700px) {
+  .data-table thead {
+    display: none;
+  }
+
+  .data-table,
+  .data-table tbody,
+  .data-table tr {
+    display: block;
+    width: 100%;
+  }
+
+  .data-table tr {
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .data-table td {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 14px;
+    padding: 5px 2px;
+    border: 0;
+    text-align: right;
+  }
+
+  .data-table td::before {
+    content: attr(data-label);
+    font-weight: 700;
+    font-size: 12px;
+    color: var(--muted);
+    text-align: left;
+    flex-shrink: 0;
+  }
+
+  .data-table td.actions-cell {
+    display: flex;
+    justify-content: flex-start;
+    padding-top: 8px;
+  }
+
+  .data-table td.actions-cell::before {
+    display: none;
+  }
+}
+
+/* Aperçu du document */
+
+.doc-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.doc-paper {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  overflow-x: auto;
+}
+
+/* Messages et fenêtres de confirmation */
+
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 92px;
+  transform: translate(-50%, 20px);
+  z-index: 300;
+  width: max-content;
+  max-width: calc(100% - 32px);
+  text-align: center;
+  padding: 12px 16px;
+  border-radius: 12px;
+  color: #fff;
+  background: #065f46;
+  font-size: 14px;
+  font-weight: 600;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.toast.error {
+  background: #b91c1c;
+}
+
+.toast.show {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 400;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(15, 23, 42, 0.55);
+}
+
+.modal {
+  width: 100%;
+  max-width: 380px;
+  padding: 20px;
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+}
+
+.modal p {
+  font-size: 15px;
+  margin-bottom: 18px;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+/* Impression et enregistrement en PDF */
+
+@page {
+  size: A4;
+  margin: 14mm;
+}
+
+@media print {
+  body {
+    background: #fff;
+  }
+
+  .topbar,
+  .bottom-nav,
+  .no-print,
+  .page-heading,
+  .toast,
+  .modal-backdrop {
+    display: none !important;
+  }
+
+  .app {
+    max-width: none;
+    padding-bottom: 0;
+    min-height: 0;
+  }
+
+  .main-content {
+    padding: 0;
+  }
+
+  .doc-paper {
+    border: 0;
+    box-shadow: none;
+    overflow: visible;
+    padding: 0;
+    max-width: none;
+  }
+}
+
+/* Mode capture (capture d'écran propre) et fenêtre de texte */
+
+body.capture-mode .topbar,
+body.capture-mode .bottom-nav,
+body.capture-mode .page-heading,
+body.capture-mode .doc-toolbar,
+body.capture-mode .toast {
+  display: none !important;
+}
+
+body.capture-mode .main-content {
+  padding: 0;
+}
+
+body.capture-mode .app {
+  padding-bottom: 0;
+}
+
+.capture-exit {
+  position: fixed;
+  top: 8px;
+  right: 8px;
+  z-index: 500;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(17, 24, 39, 0.75);
+  color: #fff;
+  font-size: 12px;
+}
+
+.text-dialog-area {
+  width: 100%;
+  margin-bottom: 14px;
+  padding: 10px;
+  font: inherit;
+  font-size: 14px;
+  border: 1px solid #cbd5e1;
+  border-radius: 12px;
+}
+
+.modal-actions {
+  flex-wrap: wrap;
+}
+
+/* Lignes d'articles */
+
+.items-title {
+  font-size: 15px;
+  margin-top: 4px;
+}
+
+.item-row {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: #f8fafc;
+  margin-bottom: 10px;
+}
+
+.item-numbers {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr;
+  gap: 10px;
+}
+
+.item-foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.item-total {
+  font-weight: 800;
+  color: var(--primary-dark);
+}
+
+/* Factures en retard et filtres */
+
+.late-box {
+  background: #fef2f2;
+  border-color: #fecaca;
+  color: #991b1b;
+}
+
+.late-box .text-button {
+  color: #b91c1c;
+  padding-left: 0;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.chip {
+  min-height: 42px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.chip.active {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #fff;
+}
+
+/* Logo */
+
+.logo-preview {
+  display: flex;
+  justify-content: center;
+  padding: 14px;
+  margin: 10px 0;
+  border: 1px dashed #cbd5e1;
+  border-radius: 12px;
+  background: #fff;
+}
+
+.logo-preview img {
+  max-width: 100%;
+  max-height: 110px;
+  object-fit: contain;
+}
+
+/* Rappel de sauvegarde */
+
+.backup-box {
+  background: var(--primary-light);
+  border-color: #bfdbfe;
+  color: var(--primary-dark);
+}
+
+.backup-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+</style>
+</head>
+<body>
+
+  <div class="app">
+
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-icon">E</div>
+        <div>
+          <h1>E-facture</h1>
+          <p>Gestion commerciale</p>
+        </div>
+      </div>
+
+      <button type="button" class="profile-button" id="profileButton" data-action="settings" aria-label="Paramètres de l'entreprise">
+        <span>🏢</span>
+      </button>
+    </header>
+
+    <!-- Cette zone est remplie par script.js (tableau de bord, clients, factures, etc.) -->
+    <main class="main-content" id="main-content">
+      <p class="muted-text">Chargement de l'application…</p>
+      <noscript><p>JavaScript est désactivé : E-facture ne peut pas fonctionner.</p></noscript>
+    </main>
+
+    <nav class="bottom-nav" aria-label="Navigation principale">
+      <button type="button" class="nav-item active" data-action="dashboard">
+        <span>⌂</span>
+        <small>Accueil</small>
+      </button>
+      <button type="button" class="nav-item" data-action="clients">
+        <span>♧</span>
+        <small>Clients</small>
+      </button>
+      <button type="button" class="nav-item" data-action="quotes">
+        <span>▤</span>
+        <small>Devis</small>
+      </button>
+      <button type="button" class="nav-item" data-action="invoices">
+        <span>▧</span>
+        <small>Factures</small>
+      </button>
+      <button type="button" class="nav-item" data-action="payments">
+        <span>＄</span>
+        <small>Paiements</small>
+      </button>
+      <button type="button" class="nav-item" data-action="settings">
+        <span>⚙</span>
+        <small>Réglages</small>
+      </button>
+    </nav>
+
+  </div>
+
+  <script>
+/* =====================================================
+   E-FACTURE — script.js (version corrigée)
+   Gestion locale : clients, devis, factures, paiements,
+   paramètres, sauvegarde et impression.
+   Les données sont enregistrées dans le navigateur
+   (localStorage) : ce n'est PAS une synchronisation en ligne.
+   ===================================================== */
+"use strict";
+
+const STORAGE_KEY = "efacture_data_v2";
+const OLD_STORAGE_KEY = "efacture_data";
+
+const DEFAULT_DATA = {
+  company: {
+    name: "Mon entreprise",
+    address: "",
+    phone: "",
+    email: "",
+    taxId: "",
+    paymentTerms: "Paiement sous 30 jours",
+    taxRate: 18,
+    logo: ""
+  },
+  clients: [],
+  invoices: [],
+  quotes: [],
+  payments: [],
+  counters: { invoice: 1, quote: 1 },
+  lastExport: "",
+  reminderSnoozeUntil: ""
+};
+
+let storageAvailable = true;
+let startupWarning = "";
+let appData = loadData();
+let currentPage = "dashboard";
+
+/* ---------- Navigation : bouton Retour d'Android ---------- */
+let pendingView = null;
+let viewStack = [];
+let suppressStack = false;
+let guardPresent = false;
+const DASHBOARD_VIEW = { key: "dashboard", kind: "tab", run: () => showDashboard() };
+
+function setView(key, kind, run) {
+  pendingView = { key, kind, run };
+}
+
+function pushGuard() {
+  try {
+    history.pushState({ efacture: 1 }, "");
+    guardPresent = true;
+  } catch (error) {
+    guardPresent = false;
+  }
+}
+
+/* Les onglets repartent de l'accueil ; les formulaires et aperçus s'empilent. */
+function registerView(view) {
+  if (suppressStack || !view) return;
+  if (view.kind === "tab") {
+    viewStack = view.key === "dashboard" ? [view] : [DASHBOARD_VIEW, view];
+  } else {
+    const index = viewStack.findIndex(v => v.key === view.key);
+    if (index >= 0) viewStack = viewStack.slice(0, index);
+    viewStack.push(view);
+  }
+  if (viewStack.length > 1 && !guardPresent) pushGuard();
+}
+
+function handleBack() {
+  guardPresent = false;
+  const modal = document.querySelector(".modal-backdrop");
+  if (modal) {
+    const close = modal.querySelector('[data-modal="cancel"], [data-modal="close"]');
+    if (close) close.click(); else modal.remove();
+    pushGuard();
+    return;
+  }
+  if (document.body.classList.contains("capture-mode")) {
+    exitCaptureMode();
+    pushGuard();
+    return;
+  }
+  if (viewStack.length > 1) {
+    viewStack.pop();
+    const view = viewStack[viewStack.length - 1];
+    suppressStack = true;
+    try { view.run(); } finally { suppressStack = false; }
+    if (viewStack.length > 1) pushGuard();
+    return;
+  }
+  history.back(); // à l'accueil : on laisse Retour quitter l'application
+}
+
+/* ---------- Données : lecture, nettoyage, sauvegarde ---------- */
+
+function clone(value) {
+  return JSON.parse(JSON.stringify(value));
+}
+
+function onlyObjectsWithId(list) {
+  return Array.isArray(list)
+    ? list.filter(item => item && typeof item === "object" && item.id)
+    : [];
+}
+
+function normalizeData(data) {
+  const base = clone(DEFAULT_DATA);
+  const d = data && typeof data === "object" ? data : {};
+  return {
+    ...base,
+    ...d,
+    company: { ...base.company, ...(d.company || {}) },
+    clients: onlyObjectsWithId(d.clients),
+    invoices: onlyObjectsWithId(d.invoices),
+    quotes: onlyObjectsWithId(d.quotes),
+    payments: onlyObjectsWithId(d.payments),
+    counters: { ...base.counters, ...(d.counters || {}) }
+  };
+}
+
+function loadData() {
+  let raw = null;
+  try {
+    raw = localStorage.getItem(STORAGE_KEY) || localStorage.getItem(OLD_STORAGE_KEY);
+  } catch (error) {
+    console.error("Stockage inaccessible :", error);
+    storageAvailable = false;
+    return normalizeData({});
+  }
+  if (!raw) return normalizeData({});
+  try {
+    return normalizeData(JSON.parse(raw));
+  } catch (error) {
+    console.error("Données illisibles :", error);
+    // On garde une copie brute pour ne jamais écraser l'original sans filet.
+    try { localStorage.setItem(STORAGE_KEY + "_illisible", raw); } catch (e) { /* ignoré */ }
+    startupWarning = "Tes données enregistrées sont illisibles. Une copie brute a été conservée. Avant de saisir quoi que ce soit, restaure une sauvegarde dans Réglages.";
+    return normalizeData({});
+  }
+}
+
+function saveData() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(appData));
+    storageAvailable = true;
+    return true;
+  } catch (error) {
+    console.error("Erreur de sauvegarde :", error);
+    storageAvailable = false;
+    showToast("Sauvegarde impossible sur cet appareil. Exporte tes données dès que possible.", "error");
+    return false;
+  }
+}
+
+/* ---------- Outils généraux ---------- */
+
+function uid() {
+  return Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+}
+
+function escapeHTML(value) {
+  return String(value ?? "").replace(/[&<>"']/g, ch => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+  }[ch]));
+}
+
+function money(value) {
+  return new Intl.NumberFormat("fr-FR", { maximumFractionDigits: 0 }).format(Number(value) || 0) + " FCFA";
+}
+
+function parseDate(value) {
+  if (!value) return null;
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(value));
+  const d = match ? new Date(Number(match[1]), Number(match[2]) - 1, Number(match[3])) : new Date(value);
+  return Number.isNaN(d.getTime()) ? null : d;
+}
+
+function formatDate(value) {
+  const d = parseDate(value);
+  return d ? d.toLocaleDateString("fr-FR") : "—";
+}
+
+function toInputDate(d) {
+  const local = new Date(d.getTime() - d.getTimezoneOffset() * 60000);
+  return local.toISOString().slice(0, 10);
+}
+
+function today() {
+  return toInputDate(new Date());
+}
+
+function addDays(days) {
+  const d = new Date();
+  d.setDate(d.getDate() + days);
+  return toInputDate(d);
+}
+
+/* Un logo n'est affiché que s'il s'agit d'une vraie image PNG ou JPEG intégrée. */
+function safeLogo(value) {
+  return typeof value === "string" && /^data:image\/(png|jpeg);base64,[A-Za-z0-9+/=]+$/.test(value) ? value : "";
+}
+
+function processLogoFile(file) {
+  return new Promise((resolve, reject) => {
+    if (!file || !/^image\//.test(file.type || "")) { reject(new Error("Ce fichier n'est pas une image.")); return; }
+    const reader = new FileReader();
+    reader.onerror = () => reject(new Error("Lecture de l'image impossible."));
+    reader.onload = () => {
+      const img = new Image();
+      img.onerror = () => reject(new Error("Image illisible ou format non pris en charge."));
+      img.onload = () => {
+        const maxSide = 320;
+        const ratio = Math.min(1, maxSide / Math.max(img.width, img.height));
+        const w = Math.max(1, Math.round(img.width * ratio));
+        const h = Math.max(1, Math.round(img.height * ratio));
+        const canvas = document.createElement("canvas");
+        canvas.width = w;
+        canvas.height = h;
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(img, 0, 0, w, h);
+        let url = canvas.toDataURL("image/png");
+        if (url.length > 150000) {
+          ctx.globalCompositeOperation = "destination-over";
+          ctx.fillStyle = "#ffffff";
+          ctx.fillRect(0, 0, w, h);
+          url = canvas.toDataURL("image/jpeg", 0.85);
+        }
+        if (!safeLogo(url)) { reject(new Error("Conversion de l'image impossible.")); return; }
+        resolve(url);
+      };
+      img.src = reader.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+async function handleLogoFile(file) {
+  if (!file) return;
+  const previous = appData.company.logo;
+  try {
+    appData.company.logo = await processLogoFile(file);
+  } catch (error) {
+    showToast(error.message, "error");
+    return;
+  }
+  if (saveData()) {
+    showSettings();
+    showToast("Logo enregistré.");
+  } else {
+    appData.company.logo = previous;
+  }
+}
+
+/* ---------- Installation comme application (PWA) ---------- */
+
+let deferredInstallPrompt = null;
+
+function isStandalone() {
+  return (window.matchMedia && window.matchMedia("(display-mode: standalone)").matches) || window.navigator.standalone === true;
+}
+
+function isIOS() {
+  return /iphone|ipad|ipod/i.test(navigator.userAgent || "");
+}
+
+function installPanelHTML() {
+  let body;
+  if (isStandalone()) {
+    body = `<p class="muted-text">✓ E-facture est installée et s'ouvre comme une vraie application.</p>`;
+  } else if (!/^https?:$/.test(location.protocol)) {
+    body = `<p class="muted-text">Cette copie est ouverte depuis un fichier du téléphone : elle ne peut pas être installée.
+      Pour l'installer, mets en ligne gratuitement le dossier « e-facture-pwa » (adresse en https://), puis ouvre cette adresse.</p>`;
+  } else if (deferredInstallPrompt) {
+    body = `<p class="muted-text">Ajoute E-facture à ton écran d'accueil : elle s'ouvre en plein écran et fonctionne sans connexion.</p>
+      <div class="quick-actions"><button type="button" class="primary-button" data-action="installApp">Installer l'application</button></div>`;
+  } else if (isIOS()) {
+    body = `<p class="muted-text">Sur iPhone ou iPad, dans Safari : touche le bouton Partager, puis « Sur l'écran d'accueil ».</p>`;
+  } else {
+    body = `<p class="muted-text">Dans le menu du navigateur (⋮ ou ⋯), choisis « Installer l'application » ou « Ajouter à l'écran d'accueil ».
+      Sur ordinateur, cherche l'icône d'installation dans la barre d'adresse.</p>`;
+  }
+  const note = isStandalone() ? "" : `<p class="muted-text"><strong>Important :</strong> l'application installée a sa propre mémoire.
+      Pour y retrouver tes données, utilise « Exporter » ici, puis « Importer » dans l'application installée.</p>`;
+  return `<section class="panel"><h3>Installer l'application</h3>${body}${note}</section>`;
+}
+
+async function installApp() {
+  if (!deferredInstallPrompt) {
+    showToast("L'installation n'est pas disponible pour le moment.", "error");
+    return;
+  }
+  const promptEvent = deferredInstallPrompt;
+  deferredInstallPrompt = null;
+  try {
+    promptEvent.prompt();
+    const choice = await promptEvent.userChoice;
+    if (choice && choice.outcome === "accepted") showToast("Installation en cours…");
+  } catch (error) {
+    console.error(error);
+    showToast("L'installation a échoué. Utilise le menu du navigateur.", "error");
+  }
+  if (currentPage === "settings") showSettings();
+}
+
+window.addEventListener("beforeinstallprompt", event => {
+  event.preventDefault();
+  deferredInstallPrompt = event;
+  if (currentPage === "settings") showSettings();
+});
+
+window.addEventListener("appinstalled", () => {
+  deferredInstallPrompt = null;
+  showToast("E-facture est installée.");
+  if (currentPage === "settings") showSettings();
+});
+
+/* Le service worker n'est enregistré que dans la version « en ligne » (celle qui contient le manifeste). */
+function registerServiceWorker() {
+  if (!("serviceWorker" in navigator)) return;
+  if (!/^https?:$/.test(location.protocol)) return;
+  if (!document.querySelector('link[rel="manifest"]')) return;
+  navigator.serviceWorker.register("sw.js").then(registration => {
+    registration.addEventListener("updatefound", () => {
+      const worker = registration.installing;
+      if (!worker) return;
+      worker.addEventListener("statechange", () => {
+        if (worker.state === "installed" && navigator.serviceWorker.controller) {
+          showToast("Mise à jour prête : ferme puis rouvre l'application pour l'utiliser.");
+        }
+      });
+    });
+  }).catch(error => console.warn("Service worker non enregistré :", error));
+}
+
+function getMainContent() {
+  return document.getElementById("main-content");
+}
+
+function getClient(id) {
+  return appData.clients.find(c => c.id === id) || null;
+}
+
+function docClientName(doc) {
+  return (getClient(doc.clientId) || {}).name || doc.clientName || "Client";
+}
+
+function getDocumentTotal(doc) {
+  if (doc.total !== undefined && doc.total !== null && doc.total !== "") return Number(doc.total) || 0;
+  return (Number(doc.subtotal) || 0) + (Number(doc.tax) || 0);
+}
+
+function getPaidAmount(invoice) {
+  const paid = appData.payments
+    .filter(p => p.invoiceId === invoice.id)
+    .reduce((sum, p) => sum + (Number(p.amount) || 0), 0);
+  return Math.min(paid, getDocumentTotal(invoice));
+}
+
+function getBalance(invoice) {
+  return Math.max(0, getDocumentTotal(invoice) - getPaidAmount(invoice));
+}
+
+function getInvoiceStatus(invoice) {
+  const total = getDocumentTotal(invoice);
+  const paid = getPaidAmount(invoice);
+  if (total > 0 && paid >= total) return "Payée";
+  if (paid > 0) return "Partiellement payée";
+  return "Impayée";
+}
+
+function daysLate(invoice) {
+  const due = parseDate(invoice.dueDate);
+  if (!due) return 0;
+  return Math.round((parseDate(today()) - due) / 86400000);
+}
+
+function isOverdue(invoice) {
+  return Boolean(invoice.dueDate) && getBalance(invoice) > 0 && daysLate(invoice) > 0;
+}
+
+function getDisplayStatus(invoice) {
+  return isOverdue(invoice) ? `En retard · ${daysLate(invoice)} j` : getInvoiceStatus(invoice);
+}
+
+function reminderText(invoice) {
+  const c = appData.company;
+  const lines = [
+    `Bonjour ${docClientName(invoice)},`,
+    "",
+    `Sauf erreur de notre part, la facture ${invoice.number} du ${formatDate(invoice.createdAt)} (échéance le ${formatDate(invoice.dueDate)}) reste à régler : il reste ${money(getBalance(invoice))} sur un total de ${money(getDocumentTotal(invoice))}.`,
+    "",
+    "Merci de procéder au règlement dès que possible. N'hésitez pas à nous contacter pour toute question.",
+    "",
+    "Cordialement,",
+    c.name || "",
+    c.phone || ""
+  ];
+  return lines.filter((line, i) => line !== "" || (i > 0 && lines[i - 1] !== "")).join("\n").trim();
+}
+
+const BACKUP_REMINDER_DAYS = 7;
+
+function daysSinceBackup() {
+  const d = parseDate(appData.lastExport);
+  if (!d) return null;
+  return Math.max(0, Math.floor((Date.now() - d.getTime()) / 86400000));
+}
+
+function hasAnyData() {
+  return appData.clients.length + appData.invoices.length + appData.quotes.length + appData.payments.length > 0;
+}
+
+function backupReminderDue() {
+  if (!hasAnyData()) return false;
+  if (appData.reminderSnoozeUntil && appData.reminderSnoozeUntil > today()) return false;
+  const days = daysSinceBackup();
+  return days === null || days >= BACKUP_REMINDER_DAYS;
+}
+
+function recordBackup() {
+  appData.lastExport = new Date().toISOString();
+  appData.reminderSnoozeUntil = "";
+  saveData();
+}
+
+function refreshAfterBackup() {
+  if (currentPage === "settings") showSettings();
+  else if (currentPage === "dashboard") showDashboard();
+}
+
+function statusClass(status) {
+  if (status === "Payée" || status === "Accepté" || status === "Converti") return "paid";
+  if (status === "Partiellement payée" || status === "En attente") return "pending";
+  return "unpaid";
+}
+
+function statusBadge(status) {
+  return `<span class="status ${statusClass(status)}">${escapeHTML(status)}</span>`;
+}
+
+function nextNumber(type) {
+  const isInvoice = type === "invoice";
+  const prefix = isInvoice ? "FAC" : "DEV";
+  const key = isInvoice ? "invoice" : "quote";
+  const list = isInvoice ? appData.invoices : appData.quotes;
+  let n = Number(appData.counters[key]) || 1;
+  let number;
+  do {
+    number = `${prefix}-${new Date().getFullYear()}-${String(n).padStart(4, "0")}`;
+    n += 1;
+  } while (list.some(item => item.number === number));
+  appData.counters[key] = n;
+  return number;
+}
+
+/* ---------- Messages et confirmations (sans alert/confirm) ---------- */
+
+let toastTimer = null;
+
+function showToast(message, type = "success") {
+  let el = document.getElementById("toast");
+  if (!el) {
+    el = document.createElement("div");
+    el.id = "toast";
+    el.setAttribute("role", "status");
+    document.body.appendChild(el);
+  }
+  el.textContent = message;
+  el.className = `toast show ${type}`;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { el.className = "toast"; }, type === "error" ? 6000 : 3000);
+}
+
+function askConfirm(message, okLabel = "Confirmer", danger = false) {
+  return new Promise(resolve => {
+    const back = document.createElement("div");
+    back.className = "modal-backdrop";
+    back.innerHTML = `
+      <div class="modal" role="dialog" aria-modal="true">
+        <p>${escapeHTML(message)}</p>
+        <div class="modal-actions">
+          <button type="button" class="btn" data-modal="cancel">Annuler</button>
+          <button type="button" class="btn ${danger ? "btn-danger-solid" : "btn-primary"}" data-modal="ok">${escapeHTML(okLabel)}</button>
+        </div>
+      </div>`;
+    const close = result => { back.remove(); resolve(result); };
+    back.addEventListener("click", event => {
+      const target = event.target.closest("[data-modal]");
+      if (target) close(target.dataset.modal === "ok");
+      else if (event.target === back) close(false);
+    });
+    document.body.appendChild(back);
+    const cancel = back.querySelector('[data-modal="cancel"]');
+    if (cancel) cancel.focus();
+  });
+}
+
+/* ---------- Affichage commun ---------- */
+
+function renderPage(title, subtitle, content) {
+  exitCaptureMode();
+  registerView(pendingView);
+  const main = getMainContent();
+  if (!main) {
+    console.error("Zone principale introuvable : vérifie que index.html contient id=\"main-content\".");
+    return;
+  }
+  const warning = storageAvailable ? "" : `
+    <div class="alert-box">⚠ Le stockage du navigateur n'est pas disponible : tes données seront perdues à la fermeture.
+    Utilise « Exporter » dans Réglages pour les conserver.</div>`;
+  const corrupt = startupWarning ? `<div class="alert-box late-box">⚠ ${escapeHTML(startupWarning)}</div>` : "";
+  main.innerHTML = `
+    <section class="page-heading">
+      <h2>${escapeHTML(title)}</h2>
+      <p>${escapeHTML(subtitle || "")}</p>
+    </section>${corrupt}${warning}${content}`;
+  updateActiveNavigation();
+  window.scrollTo(0, 0);
+}
+
+function updateActiveNavigation() {
+  document.querySelectorAll(".nav-item").forEach(el => {
+    el.classList.toggle("active", el.dataset.action === currentPage);
+  });
+}
+
+function cell(label, html, cssClass = "") {
+  return `<td data-label="${escapeHTML(label)}"${cssClass ? ` class="${cssClass}"` : ""}>${html}</td>`;
+}
+
+function dataTable(headers, rows) {
+  return `<div class="table-wrap"><table class="data-table">
+    <thead><tr>${headers.map(h => `<th>${h}</th>`).join("")}</tr></thead>
+    <tbody>${rows}</tbody></table></div>`;
+}
+
+function btn(label, action, id, extraClass = "") {
+  const idAttr = id ? ` data-id="${escapeHTML(id)}"` : "";
+  return `<button type="button" class="btn btn-small ${extraClass}" data-action="${action}"${idAttr}>${label}</button>`;
+}
+
+/* ---------- Pages ---------- */
+
+function statCard(icon, color, label, value, caption) {
+  return `<article class="stat-card">
+    <div class="stat-top"><span class="stat-icon ${color}">${icon}</span><span class="stat-label">${label}</span></div>
+    <strong class="stat-value">${value}</strong><p>${caption}</p></article>`;
+}
+
+function showDashboard() {
+  setView("dashboard", "tab", () => showDashboard());
+  currentPage = "dashboard";
+  const billed = appData.invoices.reduce((s, x) => s + getDocumentTotal(x), 0);
+  const paid = appData.invoices.reduce((s, x) => s + getPaidAmount(x), 0);
+  const remaining = appData.invoices.reduce((s, x) => s + getBalance(x), 0);
+  const recent = [...appData.invoices]
+    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+    .slice(0, 5);
+
+  const recentRows = recent.map(inv =>
+    "<tr>" +
+    cell("Numéro", escapeHTML(inv.number)) +
+    cell("Client", escapeHTML(docClientName(inv))) +
+    cell("Montant", money(getDocumentTotal(inv))) +
+    cell("Statut", statusBadge(getDisplayStatus(inv))) +
+    cell("Actions", btn("Voir / Imprimer", "viewInvoice", inv.id), "actions-cell") +
+    "</tr>").join("");
+
+  const late = appData.invoices.filter(isOverdue);
+  const lateAmount = late.reduce((sum, inv) => sum + getBalance(inv), 0);
+  const lateBanner = late.length ? `
+    <div class="alert-box late-box">
+      <strong>⚠ ${late.length} facture${late.length > 1 ? "s" : ""} en retard</strong> — ${money(lateAmount)} à recevoir.
+      <button type="button" class="text-button" data-action="showLate">Voir et relancer</button>
+    </div>` : "";
+
+  let backupBanner = "";
+  if (backupReminderDue()) {
+    const days = daysSinceBackup();
+    const when = days === null ? "Tu n'as encore exporté aucune sauvegarde." : `Dernière sauvegarde : il y a ${days} jour${days > 1 ? "s" : ""}.`;
+    backupBanner = `
+    <div class="alert-box backup-box">
+      <strong>💾 Pense à sauvegarder tes données</strong><br>
+      ${when} Elles ne sont que sur ce téléphone.
+      <div class="backup-actions">
+        <button type="button" class="btn btn-small btn-primary" data-action="exportData">Exporter maintenant</button>
+        <button type="button" class="btn btn-small" data-action="settings">Autres options</button>
+        <button type="button" class="btn btn-small" data-action="snoozeBackup">Plus tard</button>
+      </div>
+    </div>`;
+  }
+
+  renderPage("Tableau de bord", `${formatDate(today())} — vue générale de ton activité.`, `${backupBanner}${lateBanner}
+    <div class="stats-grid">
+      ${statCard("♧", "purple", "Clients", appData.clients.length, "Clients enregistrés")}
+      ${statCard("▤", "blue", "Factures", appData.invoices.length, "Factures enregistrées")}
+      ${statCard("＄", "blue", "Facturé", money(billed), "Total des factures")}
+      ${statCard("✓", "green", "Encaissé", money(paid), "Montant reçu")}
+      ${statCard("◷", "orange", "À recevoir", money(remaining), "Soldes restants")}
+      ${statCard("▧", "purple", "Devis", appData.quotes.length, "Devis enregistrés")}
+    </div>
+
+    <section class="panel">
+      <div class="panel-heading"><h3>Actions rapides</h3></div>
+      <div class="quick-actions">
+        <button type="button" class="action-button" data-action="newInvoice">+ Nouvelle facture</button>
+        <button type="button" class="action-button" data-action="newQuote">+ Nouveau devis</button>
+        <button type="button" class="action-button" data-action="newClient">+ Nouveau client</button>
+        <button type="button" class="action-button" data-action="newPayment">+ Enregistrer un paiement</button>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-heading"><h3>Factures récentes</h3>
+        <button type="button" class="text-button" data-action="invoices">Voir tout</button></div>
+      ${recent.length
+        ? dataTable(["Numéro", "Client", "Montant", "Statut", "Actions"], recentRows)
+        : `<p class="empty-state">Aucune facture pour le moment.</p>`}
+    </section>`);
+}
+
+function showClients() {
+  setView("clients", "tab", () => showClients());
+  currentPage = "clients";
+  const rows = appData.clients.map(c =>
+    "<tr>" +
+    cell("Nom", escapeHTML(c.name)) +
+    cell("Téléphone", escapeHTML(c.phone || "—")) +
+    cell("E-mail", escapeHTML(c.email || "—")) +
+    cell("Actions", btn("Modifier", "editClient", c.id) + btn("Supprimer", "deleteClient", c.id, "btn-danger"), "actions-cell") +
+    "</tr>").join("");
+
+  renderPage("Clients", "Gère les coordonnées de tes clients.", `
+    <section class="panel">
+      <div class="panel-heading"><h3>Liste des clients (${appData.clients.length})</h3>
+        <button type="button" class="primary-button" data-action="newClient">+ Ajouter un client</button></div>
+      ${appData.clients.length
+        ? dataTable(["Nom", "Téléphone", "E-mail", "Actions"], rows)
+        : `<p class="empty-state">Aucun client enregistré.</p>`}
+    </section>`);
+}
+
+let invoiceFilter = "all";
+
+const INVOICE_FILTERS = [
+  ["all", "Toutes", () => true],
+  ["unpaid", "À encaisser", inv => getBalance(inv) > 0],
+  ["late", "En retard", inv => isOverdue(inv)],
+  ["paid", "Payées", inv => getBalance(inv) === 0]
+];
+
+function showInvoices() {
+  setView("invoices", "tab", () => showInvoices());
+  currentPage = "invoices";
+  const all = [...appData.invoices].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+  const current = INVOICE_FILTERS.find(f => f[0] === invoiceFilter) || INVOICE_FILTERS[0];
+  const list = all.filter(current[2]);
+  const chips = INVOICE_FILTERS.map(([key, label, test]) =>
+    `<button type="button" class="chip ${key === current[0] ? "active" : ""}" data-action="filterInvoices" data-id="${key}">${label} (${all.filter(test).length})</button>`
+  ).join("");
+
+  const rows = list.map(inv => {
+    const balance = getBalance(inv);
+    return "<tr>" +
+      cell("Numéro", escapeHTML(inv.number)) +
+      cell("Client", escapeHTML(docClientName(inv))) +
+      cell("Date", formatDate(inv.createdAt)) +
+      cell("Échéance", formatDate(inv.dueDate)) +
+      cell("Total", money(getDocumentTotal(inv))) +
+      cell("Reste à payer", money(balance)) +
+      cell("Statut", statusBadge(getDisplayStatus(inv))) +
+      cell("Actions",
+        btn("Voir / Imprimer", "viewInvoice", inv.id) +
+        btn("Modifier", "editInvoice", inv.id) +
+        (balance > 0 ? btn("Paiement", "newPaymentForInvoice", inv.id) : "") +
+        (isOverdue(inv) ? btn("Relancer", "remindInvoice", inv.id) : "") +
+        btn("Supprimer", "deleteInvoice", inv.id, "btn-danger"), "actions-cell") +
+      "</tr>";
+  }).join("");
+
+  renderPage("Factures", "Crée, consulte et imprime tes factures.", `
+    <section class="panel">
+      <div class="panel-heading"><h3>Factures (${list.length})</h3>
+        <button type="button" class="primary-button" data-action="newInvoice">+ Nouvelle facture</button></div>
+      <div class="chips">${chips}</div>
+      ${list.length
+        ? dataTable(["Numéro", "Client", "Date", "Échéance", "Total", "Reste à payer", "Statut", "Actions"], rows)
+        : `<p class="empty-state">${all.length ? "Aucune facture dans cette catégorie." : "Aucune facture enregistrée."}</p>`}
+    </section>`);
+}
+
+function showQuotes() {
+  setView("quotes", "tab", () => showQuotes());
+  currentPage = "quotes";
+  const list = [...appData.quotes].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+  const rows = list.map(q => {
+    const status = q.status || "En attente";
+    return "<tr>" +
+      cell("Numéro", escapeHTML(q.number)) +
+      cell("Client", escapeHTML(docClientName(q))) +
+      cell("Date", formatDate(q.createdAt)) +
+      cell("Total", money(getDocumentTotal(q))) +
+      cell("Statut", statusBadge(status)) +
+      cell("Actions",
+        btn("Voir / Imprimer", "viewQuote", q.id) +
+        (status !== "Converti" ? btn("Modifier", "editQuote", q.id) + btn("Convertir en facture", "convertQuote", q.id) : "") +
+        btn("Supprimer", "deleteQuote", q.id, "btn-danger"), "actions-cell") +
+      "</tr>";
+  }).join("");
+
+  renderPage("Devis", "Prépare tes offres commerciales.", `
+    <section class="panel">
+      <div class="panel-heading"><h3>Tous les devis (${list.length})</h3>
+        <button type="button" class="primary-button" data-action="newQuote">+ Nouveau devis</button></div>
+      ${list.length
+        ? dataTable(["Numéro", "Client", "Date", "Total", "Statut", "Actions"], rows)
+        : `<p class="empty-state">Aucun devis enregistré.</p>`}
+    </section>`);
+}
+
+function showPayments() {
+  setView("payments", "tab", () => showPayments());
+  currentPage = "payments";
+  const list = [...appData.payments].sort((a, b) => new Date(b.date) - new Date(a.date));
+  const total = list.reduce((s, p) => s + (Number(p.amount) || 0), 0);
+  const rows = list.map(p => {
+    const inv = appData.invoices.find(x => x.id === p.invoiceId);
+    return "<tr>" +
+      cell("Date", formatDate(p.date)) +
+      cell("Facture", escapeHTML(inv ? inv.number : "Facture supprimée")) +
+      cell("Client", escapeHTML(inv ? docClientName(inv) : "—")) +
+      cell("Montant", money(p.amount)) +
+      cell("Moyen", escapeHTML(p.method || "—")) +
+      cell("Actions", btn("Supprimer", "deletePayment", p.id, "btn-danger"), "actions-cell") +
+      "</tr>";
+  }).join("");
+
+  renderPage("Paiements", "Suis les encaissements de ton entreprise.", `
+    <section class="panel">
+      <div class="panel-heading"><h3>Total encaissé : ${money(total)}</h3>
+        <button type="button" class="primary-button" data-action="newPayment">+ Nouveau paiement</button></div>
+      ${list.length
+        ? dataTable(["Date", "Facture", "Client", "Montant", "Moyen", "Actions"], rows)
+        : `<p class="empty-state">Aucun paiement enregistré.</p>`}
+    </section>`);
+}
+
+function showSettings() {
+  setView("settings", "tab", () => showSettings());
+  currentPage = "settings";
+  const c = appData.company;
+  const sinceDays = daysSinceBackup();
+  const lastExport = appData.lastExport && sinceDays !== null
+    ? `Dernière sauvegarde : ${formatDate(appData.lastExport)} (il y a ${sinceDays} jour${sinceDays > 1 ? "s" : ""}).`
+    : "Aucune sauvegarde effectuée pour l'instant.";
+
+  renderPage("Paramètres", "Configure les informations de ton entreprise.", `
+    <section class="panel">
+      <h3>Informations de l'entreprise</h3>
+      <form data-form="settings" class="app-form">
+        <label>Nom de l'entreprise<input name="name" required value="${escapeHTML(c.name)}"></label>
+        <label>Adresse<input name="address" value="${escapeHTML(c.address)}"></label>
+        <label>Téléphone<input name="phone" type="tel" value="${escapeHTML(c.phone)}"></label>
+        <label>E-mail<input type="email" name="email" value="${escapeHTML(c.email)}"></label>
+        <label>Identifiant fiscal<input name="taxId" value="${escapeHTML(c.taxId)}"></label>
+        <label>Taux de taxe par défaut (%)<input name="taxRate" type="number" inputmode="decimal" min="0" max="100" step="0.01" value="${Number(c.taxRate) || 0}"></label>
+        <label>Conditions de paiement<textarea name="paymentTerms" rows="3">${escapeHTML(c.paymentTerms)}</textarea></label>
+        <button class="primary-button" type="submit">Enregistrer les paramètres</button>
+      </form>
+    </section>
+
+    <section class="panel">
+      <h3>Logo de l'entreprise</h3>
+      <p class="muted-text">Il apparaît en haut de tes factures et devis. L'image est réduite automatiquement.</p>
+      ${safeLogo(c.logo) ? `<div class="logo-preview"><img src="${escapeHTML(c.logo)}" alt="Logo actuel"></div>` : `<p class="empty-state">Aucun logo enregistré.</p>`}
+      <div class="quick-actions">
+        <button type="button" class="action-button" data-action="chooseLogo">${safeLogo(c.logo) ? "Changer le logo" : "Choisir un logo"}</button>
+        ${safeLogo(c.logo) ? '<button type="button" class="btn btn-danger" data-action="removeLogo">Retirer le logo</button>' : ""}
+      </div>
+      <input type="file" id="logoFile" accept="image/*" hidden>
+    </section>
+
+    ${installPanelHTML()}
+
+    <section class="panel">
+      <h3>Sauvegarde des données</h3>
+      <p class="muted-text">Tes données sont enregistrées dans le navigateur de ce téléphone. Ce n'est pas une synchronisation en ligne :
+      si tu effaces les données du navigateur ou de l'application, elles sont perdues. Exporte une copie régulièrement.</p>
+      <p class="muted-text"><strong>${escapeHTML(lastExport)}</strong></p>
+      <div class="quick-actions">
+        <button type="button" class="action-button" data-action="exportData">Exporter (fichier)</button>
+        <button type="button" class="action-button" data-action="importData">Importer un fichier</button>
+        <button type="button" class="action-button" data-action="copyBackup">Copier la sauvegarde</button>
+        <button type="button" class="action-button" data-action="restoreText">Restaurer depuis le texte</button>
+      </div>
+      <input type="file" id="importFile" hidden>
+      <label class="app-form">Texte de sauvegarde (copier / coller ici si le téléchargement ne marche pas)
+        <textarea id="backupText" rows="4" placeholder="Le texte de sauvegarde apparaît ici après « Copier la sauvegarde »."></textarea>
+      </label>
+    </section>`);
+}
+
+function showClientForm(id = null) {
+  setView("form:client:" + (id || "new"), "form", () => showClientForm(id));
+  currentPage = "clients";
+  const c = id ? getClient(id) : null;
+  renderPage(c ? "Modifier le client" : "Nouveau client", "Renseigne les coordonnées du client.", `
+    <section class="panel">
+      <form data-form="client" class="app-form">
+        <input type="hidden" name="clientId" value="${escapeHTML(c ? c.id : "")}">
+        <label>Nom du client ou de l'entreprise<input name="name" required value="${escapeHTML(c ? c.name : "")}"></label>
+        <label>Téléphone<input name="phone" type="tel" value="${escapeHTML(c ? c.phone : "")}"></label>
+        <label>E-mail<input name="email" type="email" value="${escapeHTML(c ? c.email : "")}"></label>
+        <label>Adresse<input name="address" value="${escapeHTML(c ? c.address : "")}"></label>
+        <label>Identifiant fiscal (facultatif)<input name="taxId" value="${escapeHTML(c ? c.taxId : "")}"></label>
+        <div class="form-actions">
+          <button type="submit" class="primary-button">Enregistrer</button>
+          <button type="button" class="btn" data-action="clients">Annuler</button>
+        </div>
+      </form>
+    </section>`);
+}
+
+function itemRowHTML(first, item) {
+  const it = item || {};
+  const qty = it.qty !== undefined ? it.qty : 1;
+  const price = it.price !== undefined ? it.price : "";
+  return `<div class="item-row">
+    <label>Désignation<input name="itemDescription" placeholder="Ex. : peinture du salon" value="${escapeHTML(it.description || "")}" ${first ? "required" : ""}></label>
+    <div class="item-numbers">
+      <label>Quantité<input name="itemQty" type="number" inputmode="decimal" min="0.01" step="any" value="${escapeHTML(qty)}"></label>
+      <label>Prix unitaire (FCFA)<input name="itemPrice" type="number" inputmode="numeric" min="0" step="1" value="${escapeHTML(price)}" ${first ? "required" : ""}></label>
+    </div>
+    <div class="item-foot">
+      <span class="item-total">0 FCFA</span>
+      <button type="button" class="btn btn-small btn-danger" data-action="removeItem">Retirer</button>
+    </div>
+  </div>`;
+}
+
+function readItems(form) {
+  const rows = [...form.querySelectorAll(".item-row")];
+  const items = [];
+  for (let i = 0; i < rows.length; i += 1) {
+    const description = rows[i].querySelector('[name="itemDescription"]').value.trim();
+    const priceText = rows[i].querySelector('[name="itemPrice"]').value;
+    const qty = Number(rows[i].querySelector('[name="itemQty"]').value);
+    if (!description && priceText === "") continue; // ligne vide ignorée
+    const price = Number(priceText);
+    if (!description || priceText === "" || !Number.isFinite(qty) || qty <= 0 || !Number.isFinite(price) || price < 0) {
+      return { error: `Ligne ${i + 1} : désignation, quantité (> 0) et prix valides sont obligatoires.` };
+    }
+    items.push({ description, qty, price, total: Math.round(qty * price) });
+  }
+  return { items };
+}
+
+function getItems(doc) {
+  if (Array.isArray(doc.items) && doc.items.length) return doc.items;
+  return [{ description: doc.description || "Prestation / produit", qty: 1, price: Number(doc.subtotal) || 0, total: Number(doc.subtotal) || 0 }];
+}
+
+function formatQty(qty) {
+  return new Intl.NumberFormat("fr-FR", { maximumFractionDigits: 2 }).format(Number(qty) || 0);
+}
+
+function showDocumentForm(type, docId = null) {
+  setView("form:" + type + ":" + (docId || "new"), "form", () => showDocumentForm(type, docId));
+  const isInvoice = type === "invoice";
+  currentPage = isInvoice ? "invoices" : "quotes";
+  const existing = docId ? findDocument(type, docId) : null;
+  if (docId && !existing) {
+    showToast("Document introuvable.", "error");
+    if (isInvoice) showInvoices(); else showQuotes();
+    return;
+  }
+  if (!appData.clients.length && !existing) {
+    showToast("Ajoute d'abord un client avant de créer un document.", "error");
+    showClientForm();
+    return;
+  }
+  const selectedId = existing ? existing.clientId : "";
+  let options = appData.clients
+    .map(c => `<option value="${escapeHTML(c.id)}" ${c.id === selectedId ? "selected" : ""}>${escapeHTML(c.name)}</option>`).join("");
+  if (existing && !getClient(existing.clientId)) {
+    options = `<option value="${escapeHTML(existing.clientId)}" selected>${escapeHTML(existing.clientName || "Client")} (client supprimé)</option>` + options;
+  }
+  const items = existing ? getItems(existing) : [null];
+  const taxRate = existing ? Number(existing.taxRate) || 0 : Number(appData.company.taxRate) || 0;
+  const dueDate = existing ? (existing.dueDate || "") : addDays(30);
+  const label = isInvoice ? "la facture" : "le devis";
+  const backAction = existing ? (isInvoice ? "viewInvoice" : "viewQuote") : (isInvoice ? "invoices" : "quotes");
+  const backId = existing ? ` data-id="${escapeHTML(existing.id)}"` : "";
+
+  renderPage(
+    existing ? `Modifier ${isInvoice ? "la facture" : "le devis"} ${existing.number}` : (isInvoice ? "Nouvelle facture" : "Nouveau devis"),
+    existing ? "Les paiements déjà enregistrés sont conservés." : "Saisis les informations du document.", `
+    <section class="panel">
+      <form data-form="document" class="app-form">
+        <input type="hidden" name="type" value="${type}">
+        <input type="hidden" name="docId" value="${escapeHTML(existing ? existing.id : "")}">
+        <label>Client<select name="clientId" required>${options}</select></label>
+        <h3 class="items-title">Lignes du document</h3>
+        <div id="itemsList">${items.map((item, index) => itemRowHTML(index === 0, item)).join("")}</div>
+        <button type="button" class="btn" data-action="addItem">+ Ajouter une ligne</button>
+        <label>Taux de taxe (%)<input name="taxRate" type="number" inputmode="decimal" min="0" max="100" step="0.01" value="${taxRate}"></label>
+        ${isInvoice ? `<label>Date d'échéance<input name="dueDate" type="date" value="${escapeHTML(dueDate)}"></label>` : ""}
+        <label>Notes ou conditions particulières<textarea name="notes" rows="3">${escapeHTML(existing ? existing.notes : "")}</textarea></label>
+        <p class="total-preview" id="totalPreview">Total TTC : 0 FCFA</p>
+        <div class="form-actions">
+          <button type="submit" class="primary-button">${existing ? "Enregistrer les modifications" : `Enregistrer ${label}`}</button>
+          <button type="button" class="btn" data-action="${backAction}"${backId}>Annuler</button>
+        </div>
+      </form>
+    </section>`);
+  const form = document.querySelector('form[data-form="document"]');
+  if (form) updateTotalPreview(form);
+}
+
+function showPaymentForm(invoiceId = null) {
+  setView("form:payment:" + (invoiceId || "new"), "form", () => showPaymentForm(invoiceId));
+  currentPage = "payments";
+  const invoices = appData.invoices.filter(i => getBalance(i) > 0);
+  if (!invoices.length) {
+    showToast("Aucune facture avec un solde restant à payer.", "error");
+    showPayments();
+    return;
+  }
+  const selected = invoices.find(i => i.id === invoiceId) || invoices[0];
+  const options = invoices.map(i => `
+    <option value="${escapeHTML(i.id)}" data-balance="${getBalance(i)}" ${i.id === selected.id ? "selected" : ""}>
+      ${escapeHTML(i.number)} — ${escapeHTML(docClientName(i))} — Solde : ${money(getBalance(i))}
+    </option>`).join("");
+
+  renderPage("Enregistrer un paiement", "Ajoute un encaissement à une facture.", `
+    <section class="panel">
+      <form data-form="payment" class="app-form">
+        <label>Facture<select name="invoiceId" required>${options}</select></label>
+        <label>Montant reçu (FCFA)<input name="amount" type="number" inputmode="numeric" min="1" step="1" required value="${getBalance(selected)}"></label>
+        <label>Date du paiement<input name="date" type="date" value="${today()}" required></label>
+        <label>Moyen de paiement
+          <select name="method">
+            <option>Espèces</option><option>Mobile Money</option><option>Virement bancaire</option>
+            <option>Chèque</option><option>Autre</option>
+          </select>
+        </label>
+        <label>Référence / commentaire<input name="reference" placeholder="Facultatif"></label>
+        <p class="muted-text">Le montant est pré-rempli avec le solde restant : modifie-le pour un paiement partiel.</p>
+        <div class="form-actions">
+          <button type="submit" class="primary-button">Enregistrer le paiement</button>
+          <button type="button" class="btn" data-action="payments">Annuler</button>
+        </div>
+      </form>
+    </section>`);
+}
+
+/* ---------- Document imprimable (aperçu dans l'application) ---------- */
+
+const DOC_CSS = `
+.doc-paper{background:#fff;color:#20252b;font-family:Arial,sans-serif;font-size:13px;line-height:1.5;padding:20px;max-width:800px;margin:0 auto}
+.doc-paper *{box-sizing:border-box}
+.doc-top{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
+.doc-paper h1{font-size:26px;margin:0 0 6px}
+.doc-logo{display:block;max-width:150px;max-height:90px;object-fit:contain;margin:0 0 8px}
+.doc-paper h2{font-size:14px;margin:0 0 6px;text-transform:uppercase}
+.doc-rule{border:0;border-top:2px solid #27384a;margin:18px 0}
+.doc-parties{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.doc-paper table{width:100%;border-collapse:collapse;margin-top:18px}
+.doc-paper th{background:#edf1f5}
+.doc-paper th,.doc-paper td{padding:10px 8px;border-bottom:1px solid #dce1e6;text-align:left}
+.doc-paper .right{text-align:right}
+.doc-paper table.doc-totals{width:55%;margin-left:auto}
+.doc-grand td{font-size:15px;font-weight:bold;border-top:2px solid #27384a}
+.doc-paper p{margin-top:14px}
+@media(max-width:520px){.doc-parties{grid-template-columns:1fr}.doc-paper table.doc-totals{width:100%}.doc-paper{padding:12px}}
+`;
+
+function documentMarkup(doc, type) {
+  const isInvoice = type === "invoice";
+  const client = getClient(doc.clientId) || {};
+  const company = appData.company;
+  const total = getDocumentTotal(doc);
+  const paid = isInvoice ? getPaidAmount(doc) : 0;
+  const balance = isInvoice ? getBalance(doc) : 0;
+  const status = isInvoice ? getDisplayStatus(doc) : (doc.status || "En attente");
+
+  return `<article class="doc-paper">
+    <div class="doc-top">
+      <div>
+        ${safeLogo(company.logo) ? `<img class="doc-logo" src="${escapeHTML(company.logo)}" alt="Logo">` : ""}
+        <h2>${escapeHTML(company.name || "Mon entreprise")}</h2>
+        ${company.address ? `<div>${escapeHTML(company.address)}</div>` : ""}
+        ${company.phone ? `<div>Tél. : ${escapeHTML(company.phone)}</div>` : ""}
+        ${company.email ? `<div>${escapeHTML(company.email)}</div>` : ""}
+        ${company.taxId ? `<div>Identifiant fiscal : ${escapeHTML(company.taxId)}</div>` : ""}
+      </div>
+      <div>
+        <h1>${isInvoice ? "FACTURE" : "DEVIS"}</h1>
+        <strong>${escapeHTML(doc.number)}</strong>
+        <div>Date : ${formatDate(doc.createdAt)}</div>
+        ${isInvoice && doc.dueDate ? `<div>Échéance : ${formatDate(doc.dueDate)}</div>` : ""}
+        <div>Statut : ${escapeHTML(status)}</div>
+      </div>
+    </div>
+    <hr class="doc-rule">
+    <div class="doc-parties">
+      <div>
+        <h2>Destinataire</h2>
+        <strong>${escapeHTML(client.name || doc.clientName || "Client")}</strong>
+        ${client.address ? `<div>${escapeHTML(client.address)}</div>` : ""}
+        ${client.phone ? `<div>${escapeHTML(client.phone)}</div>` : ""}
+        ${client.email ? `<div>${escapeHTML(client.email)}</div>` : ""}
+      </div>
+      <div>
+        <h2>Informations</h2>
+        <div>Devise : FCFA</div>
+        ${isInvoice ? `<div>Déjà payé : ${money(paid)}</div><div>Solde restant : ${money(balance)}</div>` : ""}
+      </div>
+    </div>
+    <table>
+      <thead><tr><th>Désignation</th><th class="right">Qté</th><th class="right">Prix unitaire</th><th class="right">Total HT</th></tr></thead>
+      <tbody>${getItems(doc).map(item => `<tr>
+        <td>${escapeHTML(item.description)}</td>
+        <td class="right">${formatQty(item.qty)}</td>
+        <td class="right">${money(item.price)}</td>
+        <td class="right">${money(item.total)}</td>
+      </tr>`).join("")}</tbody>
+    </table>
+    <table class="doc-totals">
+      <tr><td>Sous-total HT</td><td class="right">${money(doc.subtotal)}</td></tr>
+      <tr><td>Taxe (${Number(doc.taxRate) || 0} %)</td><td class="right">${money(doc.tax)}</td></tr>
+      <tr class="doc-grand"><td>Total TTC</td><td class="right">${money(total)}</td></tr>
+      ${isInvoice ? `<tr><td>Déjà payé</td><td class="right">${money(paid)}</td></tr>
+      <tr><td>Solde à payer</td><td class="right">${money(balance)}</td></tr>` : ""}
+    </table>
+    ${doc.notes ? `<p><strong>Notes :</strong><br>${escapeHTML(doc.notes)}</p>` : ""}
+    <p><strong>Conditions de paiement :</strong><br>${escapeHTML(company.paymentTerms || "À convenir entre les parties.")}</p>
+  </article>`;
+}
+
+function findDocument(type, id) {
+  const list = type === "invoice" ? appData.invoices : appData.quotes;
+  return list.find(x => x.id === id) || null;
+}
+
+function showDocumentView(type, id) {
+  setView("doc:" + type + ":" + id, "detail", () => showDocumentView(type, id));
+  const isInvoice = type === "invoice";
+  const doc = findDocument(type, id);
+  if (!doc) {
+    showToast("Document introuvable.", "error");
+    if (isInvoice) showInvoices(); else showQuotes();
+    return;
+  }
+  currentPage = isInvoice ? "invoices" : "quotes";
+  const canPay = isInvoice && getBalance(doc) > 0;
+  const canConvert = !isInvoice && doc.status !== "Converti";
+
+  renderPage(`${isInvoice ? "Facture" : "Devis"} ${doc.number}`,
+    "Vérifie le document, puis imprime-le ou enregistre-le en PDF.", `
+    <div class="doc-toolbar no-print">
+      <button type="button" class="primary-button" data-action="printCurrent">🖨 Imprimer / PDF</button>
+      <button type="button" class="btn" data-action="${isInvoice ? "textInvoice" : "textQuote"}" data-id="${escapeHTML(doc.id)}">📋 Copier le texte</button>
+      <button type="button" class="btn" data-action="captureMode">📱 Mode capture</button>
+      <button type="button" class="btn" data-action="${isInvoice ? "downloadInvoice" : "downloadQuote"}" data-id="${escapeHTML(doc.id)}">⬇ Télécharger (HTML)</button>
+      ${isInvoice || canConvert ? `<button type="button" class="btn" data-action="${isInvoice ? "editInvoice" : "editQuote"}" data-id="${escapeHTML(doc.id)}">✏ Modifier</button>` : ""}
+      ${isInvoice && isOverdue(doc) ? `<button type="button" class="btn" data-action="remindInvoice" data-id="${escapeHTML(doc.id)}">📨 Relancer</button>` : ""}
+      ${canPay ? `<button type="button" class="btn" data-action="newPaymentForInvoice" data-id="${escapeHTML(doc.id)}">Paiement</button>` : ""}
+      ${canConvert ? `<button type="button" class="btn" data-action="convertQuote" data-id="${escapeHTML(doc.id)}">Convertir en facture</button>` : ""}
+      <button type="button" class="btn" data-action="${isInvoice ? "invoices" : "quotes"}">← Retour</button>
+    </div>
+    <style>${DOC_CSS}</style>
+    ${documentMarkup(doc, type)}`);
+}
+
+function printCurrent() {
+  if (typeof window.print !== "function") {
+    showToast("L'impression n'est pas disponible ici. Utilise « Télécharger (HTML) » puis ouvre le fichier dans Chrome.", "error");
+    return;
+  }
+  try {
+    showToast("Impression lancée. Si rien ne s'ouvre : utilise « Copier le texte » ou « Mode capture ».");
+    window.print();
+  } catch (error) {
+    console.error(error);
+    showToast("Impression impossible ici. Utilise « Télécharger (HTML) » puis ouvre le fichier dans Chrome.", "error");
+  }
+}
+
+function documentText(doc, type) {
+  const isInvoice = type === "invoice";
+  const c = appData.company;
+  const header = [
+    c.name || "Mon entreprise",
+    c.address, c.phone ? `Tél. : ${c.phone}` : "", c.email,
+    c.taxId ? `Identifiant fiscal : ${c.taxId}` : ""
+  ].filter(Boolean);
+  const lines = [
+    `${isInvoice ? "FACTURE" : "DEVIS"} ${doc.number}`,
+    ...header,
+    "",
+    `Date : ${formatDate(doc.createdAt)}`,
+    isInvoice && doc.dueDate ? `Échéance : ${formatDate(doc.dueDate)}` : "",
+    `Client : ${docClientName(doc)}`,
+    "",
+    ...getItems(doc).map(item => `- ${item.description} : ${formatQty(item.qty)} x ${money(item.price)} = ${money(item.total)}`),
+    `Montant HT : ${money(doc.subtotal)}`,
+    `Taxe (${Number(doc.taxRate) || 0} %) : ${money(doc.tax)}`,
+    `TOTAL TTC : ${money(getDocumentTotal(doc))}`
+  ];
+  if (isInvoice) {
+    lines.push(`Déjà payé : ${money(getPaidAmount(doc))}`, `Solde à payer : ${money(getBalance(doc))}`);
+  }
+  if (doc.notes) lines.push("", `Notes : ${doc.notes}`);
+  lines.push("", `Conditions : ${c.paymentTerms || "À convenir"}`);
+  return lines.filter((line, i) => line !== "" || lines[i - 1] !== "").join("\n");
+}
+
+function showTextDialog(text) {
+  const back = document.createElement("div");
+  back.className = "modal-backdrop";
+  back.innerHTML = `
+    <div class="modal" role="dialog" aria-modal="true">
+      <p>Copie ce texte puis colle-le dans WhatsApp, SMS ou e-mail.</p>
+      <textarea class="text-dialog-area" rows="10" readonly>${escapeHTML(text)}</textarea>
+      <div class="modal-actions">
+        ${navigator.share ? '<button type="button" class="btn" data-modal="share">Partager</button>' : ""}
+        <button type="button" class="btn" data-modal="close">Fermer</button>
+        <button type="button" class="btn btn-primary" data-modal="copy">Copier</button>
+      </div>
+    </div>`;
+  const area = back.querySelector("textarea");
+  back.addEventListener("click", async event => {
+    const target = event.target.closest("[data-modal]");
+    if (!target) { if (event.target === back) back.remove(); return; }
+    const action = target.dataset.modal;
+    if (action === "close") { back.remove(); return; }
+    if (action === "share") {
+      try { await navigator.share({ text }); } catch (error) { /* annulé */ }
+      return;
+    }
+    area.focus();
+    area.select();
+    area.setSelectionRange(0, text.length);
+    let copied = false;
+    try { copied = document.execCommand("copy"); } catch (error) { copied = false; }
+    if (!copied && navigator.clipboard) {
+      try { await navigator.clipboard.writeText(text); copied = true; } catch (error) { copied = false; }
+    }
+    showToast(copied ? "Texte copié." : "Texte sélectionné : appui long, puis Copier.", copied ? "success" : "error");
+  });
+  document.body.appendChild(back);
+}
+
+function enterCaptureMode() {
+  document.body.classList.add("capture-mode");
+  if (!document.getElementById("captureExit")) {
+    const exit = document.createElement("button");
+    exit.id = "captureExit";
+    exit.type = "button";
+    exit.className = "capture-exit";
+    exit.dataset.action = "exitCapture";
+    exit.textContent = "✕ Quitter le mode capture";
+    document.body.appendChild(exit);
+  }
+  window.scrollTo(0, 0);
+  showToast("Fais une capture d'écran (boutons volume bas + marche), puis quitte ce mode.");
+}
+
+function exitCaptureMode() {
+  document.body.classList.remove("capture-mode");
+  const exit = document.getElementById("captureExit");
+  if (exit) exit.remove();
+}
+
+function downloadFile(filename, content, mime) {
+  const blob = new Blob([content], { type: mime });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 5000);
+}
+
+function downloadDocument(type, id) {
+  const doc = findDocument(type, id);
+  if (!doc) { showToast("Document introuvable.", "error"); return; }
+  const title = type === "invoice" ? "Facture" : "Devis";
+  const html = `<!DOCTYPE html><html lang="fr"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>${title} ${escapeHTML(doc.number)}</title>
+<style>@page{size:A4;margin:14mm}body{margin:0;background:#fff}${DOC_CSS}</style></head>
+<body>${documentMarkup(doc, type)}
+<p style="text-align:center"><button onclick="window.print()">Imprimer / Enregistrer en PDF</button></p>
+<style>@media print{button{display:none}}</style></body></html>`;
+  downloadFile(`${title}-${doc.number}.html`, html, "text/html;charset=utf-8");
+  showToast("Téléchargement demandé. Si aucun fichier n'apparaît, utilise « Copier le texte » ou « Mode capture ».");
+}
+
+/* ---------- Enregistrement des formulaires ---------- */
+
+function handleClientSubmit(form) {
+  const v = Object.fromEntries(new FormData(form).entries());
+  const name = String(v.name || "").trim();
+  if (!name) { showToast("Le nom du client est obligatoire.", "error"); return; }
+  const item = {
+    name,
+    phone: String(v.phone || "").trim(),
+    email: String(v.email || "").trim(),
+    address: String(v.address || "").trim(),
+    taxId: String(v.taxId || "").trim()
+  };
+  const existing = v.clientId ? getClient(v.clientId) : null;
+  if (existing) Object.assign(existing, item);
+  else appData.clients.push({ id: uid(), ...item, createdAt: new Date().toISOString() });
+  if (saveData()) {
+    showClients();
+    showToast(existing ? "Client modifié." : "Client enregistré.");
+  }
+}
+
+function computeAmounts(subtotal, taxRate) {
+  const ht = Math.round(subtotal);
+  const tax = Math.round((ht * taxRate) / 100);
+  return { subtotal: ht, tax, total: ht + tax };
+}
+
+function handleDocumentSubmit(form) {
+  const v = Object.fromEntries(new FormData(form).entries());
+  const isInvoice = v.type === "invoice";
+  const existing = v.docId ? findDocument(v.type, v.docId) : null;
+  if (v.docId && !existing) { showToast("Document introuvable : il a peut-être été supprimé.", "error"); return; }
+  let client = getClient(v.clientId);
+  if (!client && existing && v.clientId === existing.clientId) {
+    client = { id: existing.clientId, name: existing.clientName || "Client" };
+  }
+  const taxRate = Number(v.taxRate === "" ? 0 : v.taxRate);
+
+  if (!client) { showToast("Sélectionne un client valide.", "error"); return; }
+  const read = readItems(form);
+  if (read.error) { showToast(read.error, "error"); return; }
+  if (!read.items.length) { showToast("Ajoute au moins une ligne.", "error"); return; }
+  const subtotal = read.items.reduce((sum, item) => sum + item.total, 0);
+  const description = read.items[0].description + (read.items.length > 1 ? ` (+${read.items.length - 1} autre(s) ligne(s))` : "");
+  if (subtotal <= 0) { showToast("Le montant total doit être supérieur à 0.", "error"); return; }
+  if (!Number.isFinite(taxRate) || taxRate < 0 || taxRate > 100) { showToast("Le taux de taxe doit être entre 0 et 100.", "error"); return; }
+
+  const amounts = computeAmounts(subtotal, taxRate);
+  const fields = {
+    clientId: client.id,
+    clientName: client.name,
+    description,
+    items: read.items,
+    subtotal: amounts.subtotal,
+    taxRate,
+    tax: amounts.tax,
+    total: amounts.total,
+    notes: String(v.notes || "").trim(),
+    currency: "FCFA"
+  };
+
+  if (existing) {
+    if (isInvoice) {
+      const received = appData.payments
+        .filter(p => p.invoiceId === existing.id)
+        .reduce((sum, p) => sum + (Number(p.amount) || 0), 0);
+      if (amounts.total < received) {
+        showToast(`Le nouveau total (${money(amounts.total)}) est inférieur aux paiements déjà reçus (${money(received)}). Supprime d'abord un paiement.`, "error");
+        return;
+      }
+      Object.assign(existing, fields, { dueDate: v.dueDate || "" });
+    } else {
+      Object.assign(existing, fields);
+    }
+    existing.updatedAt = new Date().toISOString();
+    if (saveData()) {
+      showDocumentView(v.type, existing.id);
+      showToast("Modifications enregistrées.");
+    }
+    return;
+  }
+
+  const common = { id: uid(), ...fields, createdAt: new Date().toISOString() };
+  if (isInvoice) {
+    appData.invoices.push({ ...common, number: nextNumber("invoice"), dueDate: v.dueDate || "" });
+    if (saveData()) { showInvoices(); showToast("Facture enregistrée."); }
+  } else {
+    appData.quotes.push({ ...common, number: nextNumber("quote"), status: "En attente" });
+    if (saveData()) { showQuotes(); showToast("Devis enregistré."); }
+  }
+}
+
+function handlePaymentSubmit(form) {
+  const v = Object.fromEntries(new FormData(form).entries());
+  const invoice = appData.invoices.find(i => i.id === v.invoiceId);
+  const amount = Math.round(Number(v.amount));
+  if (!invoice) { showToast("Sélectionne une facture valide.", "error"); return; }
+  if (!Number.isFinite(amount) || amount <= 0) { showToast("Le montant du paiement doit être supérieur à 0.", "error"); return; }
+  const balance = getBalance(invoice);
+  if (amount > balance) {
+    showToast(`Le montant dépasse le solde restant (${money(balance)}).`, "error");
+    return;
+  }
+  appData.payments.push({
+    id: uid(),
+    invoiceId: invoice.id,
+    amount,
+    date: v.date || today(),
+    method: v.method || "Autre",
+    reference: String(v.reference || "").trim(),
+    createdAt: new Date().toISOString()
+  });
+  if (saveData()) { showPayments(); showToast("Paiement enregistré."); }
+}
+
+function handleSettingsSubmit(form) {
+  const v = Object.fromEntries(new FormData(form).entries());
+  const rate = Number(v.taxRate === "" ? 0 : v.taxRate);
+  const name = String(v.name || "").trim();
+  if (!name) { showToast("Le nom de l'entreprise est obligatoire.", "error"); return; }
+  if (!Number.isFinite(rate) || rate < 0 || rate > 100) { showToast("Le taux de taxe doit être entre 0 et 100.", "error"); return; }
+  appData.company = {
+    ...appData.company,
+    name,
+    address: String(v.address || "").trim(),
+    phone: String(v.phone || "").trim(),
+    email: String(v.email || "").trim(),
+    taxId: String(v.taxId || "").trim(),
+    taxRate: rate,
+    paymentTerms: String(v.paymentTerms || "").trim()
+  };
+  if (saveData()) { showSettings(); showToast("Paramètres enregistrés."); }
+}
+
+function updateTotalPreview(form) {
+  const preview = document.getElementById("totalPreview");
+  if (!preview) return;
+  let subtotal = 0;
+  form.querySelectorAll(".item-row").forEach(row => {
+    const qty = Number(row.querySelector('[name="itemQty"]').value);
+    const price = Number(row.querySelector('[name="itemPrice"]').value);
+    const total = Number.isFinite(qty) && Number.isFinite(price) && qty > 0 && price >= 0 ? Math.round(qty * price) : 0;
+    row.querySelector(".item-total").textContent = money(total);
+    subtotal += total;
+  });
+  const rateField = form.querySelector('[name="taxRate"]');
+  const rate = Number(rateField && rateField.value !== "" ? rateField.value : 0);
+  if (!Number.isFinite(rate) || rate < 0) { preview.textContent = "Total TTC : 0 FCFA"; return; }
+  const a = computeAmounts(subtotal, rate);
+  preview.textContent = `HT : ${money(a.subtotal)} — Taxe : ${money(a.tax)} — Total TTC : ${money(a.total)}`;
+}
+
+/* ---------- Suppression et conversion ---------- */
+
+async function deleteClient(id) {
+  const c = getClient(id);
+  if (!c) return;
+  const used = appData.invoices.some(i => i.clientId === id) || appData.quotes.some(q => q.clientId === id);
+  const extra = used ? " Ses factures et devis déjà créés seront conservés." : "";
+  if (!(await askConfirm(`Supprimer le client « ${c.name} » ?${extra}`, "Supprimer", true))) return;
+  appData.clients = appData.clients.filter(x => x.id !== id);
+  if (saveData()) { showClients(); showToast("Client supprimé."); }
+}
+
+async function deleteInvoice(id) {
+  if (!(await askConfirm("Supprimer cette facture et ses paiements associés ?", "Supprimer", true))) return;
+  appData.invoices = appData.invoices.filter(x => x.id !== id);
+  appData.payments = appData.payments.filter(x => x.invoiceId !== id);
+  if (saveData()) { showInvoices(); showToast("Facture supprimée."); }
+}
+
+async function deleteQuote(id) {
+  if (!(await askConfirm("Supprimer ce devis ?", "Supprimer", true))) return;
+  appData.quotes = appData.quotes.filter(x => x.id !== id);
+  if (saveData()) { showQuotes(); showToast("Devis supprimé."); }
+}
+
+async function deletePayment(id) {
+  if (!(await askConfirm("Supprimer ce paiement ? Le solde de la facture sera recalculé.", "Supprimer", true))) return;
+  appData.payments = appData.payments.filter(x => x.id !== id);
+  if (saveData()) { showPayments(); showToast("Paiement supprimé."); }
+}
+
+async function convertQuote(id) {
+  const q = appData.quotes.find(x => x.id === id);
+  if (!q) return;
+  if (q.status === "Converti") { showToast("Ce devis a déjà été converti en facture.", "error"); return; }
+  if (!(await askConfirm(`Créer une facture à partir du devis ${q.number} ?`, "Créer la facture"))) return;
+  const invoice = {
+    id: uid(),
+    number: nextNumber("invoice"),
+    clientId: q.clientId,
+    clientName: q.clientName,
+    description: q.description,
+    items: getItems(q),
+    subtotal: q.subtotal,
+    taxRate: q.taxRate,
+    tax: q.tax,
+    total: getDocumentTotal(q),
+    notes: q.notes || "",
+    createdAt: new Date().toISOString(),
+    dueDate: addDays(30),
+    currency: "FCFA",
+    fromQuote: q.number
+  };
+  appData.invoices.push(invoice);
+  q.status = "Converti";
+  q.invoiceId = invoice.id;
+  if (saveData()) { showInvoices(); showToast(`Facture ${invoice.number} créée.`); }
+}
+
+/* ---------- Sauvegarde : export et import ---------- */
+
+function exportData() {
+  recordBackup();
+  downloadFile(`e-facture-sauvegarde-${today()}.json`, JSON.stringify(appData, null, 2), "application/json;charset=utf-8");
+  showToast("Export demandé. Si aucun fichier n'apparaît, utilise « Copier la sauvegarde ».");
+  refreshAfterBackup();
+}
+
+function importData() {
+  const input = document.getElementById("importFile");
+  if (input) input.click();
+}
+
+async function copyBackup() {
+  const text = JSON.stringify(appData);
+  const area = document.getElementById("backupText");
+  if (area) area.value = text;
+  try {
+    await navigator.clipboard.writeText(text);
+    recordBackup();
+    showToast("Sauvegarde copiée. Colle-la dans une note ou un message pour la conserver.");
+  } catch (error) {
+    if (area) {
+      area.focus();
+      area.select();
+      showToast("Texte sélectionné : copie-le manuellement (appui long, puis Copier).");
+    }
+  }
+}
+
+async function restoreFromText(text) {
+  let data;
+  try {
+    data = JSON.parse(String(text || "").trim());
+  } catch (error) {
+    showToast("Texte ou fichier invalide : ce n'est pas une sauvegarde E-facture.", "error");
+    return;
+  }
+  const valid = data && Array.isArray(data.clients) && Array.isArray(data.invoices) &&
+    Array.isArray(data.quotes) && Array.isArray(data.payments);
+  if (!valid) { showToast("Format invalide : sauvegarde E-facture attendue.", "error"); return; }
+  if (!(await askConfirm("Cette restauration remplace toutes les données actuelles. Continuer ?", "Remplacer", true))) return;
+  appData = normalizeData(data);
+  if (saveData()) { showDashboard(); showToast("Sauvegarde restaurée."); }
+}
+
+function handleImportFile(file) {
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = () => restoreFromText(reader.result);
+  reader.onerror = () => showToast("Lecture du fichier impossible.", "error");
+  reader.readAsText(file);
+}
+
+/* ---------- Navigation et événements ---------- */
+
+const ROUTES = {
+  dashboard: () => showDashboard(),
+  clients: () => showClients(),
+  quotes: () => showQuotes(),
+  invoices: () => { invoiceFilter = "all"; showInvoices(); },
+  payments: () => showPayments(),
+  settings: () => showSettings(),
+  newClient: () => showClientForm(),
+  newInvoice: () => showDocumentForm("invoice"),
+  newQuote: () => showDocumentForm("quote"),
+  newPayment: () => showPaymentForm()
+};
+
+function handleAction(action, id, button) {
+  if (ROUTES[action]) { ROUTES[action](); return; }
+  switch (action) {
+    case "newPaymentForInvoice": showPaymentForm(id); break;
+    case "editClient": showClientForm(id); break;
+    case "installApp": installApp(); break;
+    case "snoozeBackup":
+      appData.reminderSnoozeUntil = addDays(1);
+      if (saveData()) { showDashboard(); showToast("Rappel reporté à demain."); }
+      break;
+    case "chooseLogo": { const input = document.getElementById("logoFile"); if (input) input.click(); break; }
+    case "removeLogo":
+      appData.company.logo = "";
+      if (saveData()) { showSettings(); showToast("Logo retiré."); }
+      break;
+    case "filterInvoices": invoiceFilter = id || "all"; showInvoices(); break;
+    case "showLate": invoiceFilter = "late"; showInvoices(); break;
+    case "remindInvoice": { const inv = findDocument("invoice", id); if (inv) showTextDialog(reminderText(inv)); break; }
+    case "editInvoice": showDocumentForm("invoice", id); break;
+    case "editQuote": {
+      const q = findDocument("quote", id);
+      if (q && q.status === "Converti") showToast("Ce devis est converti en facture : modifie plutôt la facture.", "error");
+      else showDocumentForm("quote", id);
+      break;
+    }
+    case "deleteClient": deleteClient(id); break;
+    case "deleteInvoice": deleteInvoice(id); break;
+    case "deleteQuote": deleteQuote(id); break;
+    case "deletePayment": deletePayment(id); break;
+    case "viewInvoice": showDocumentView("invoice", id); break;
+    case "viewQuote": showDocumentView("quote", id); break;
+    case "downloadInvoice": downloadDocument("invoice", id); break;
+    case "downloadQuote": downloadDocument("quote", id); break;
+    case "addItem": {
+      const list = document.getElementById("itemsList");
+      if (list) {
+        list.insertAdjacentHTML("beforeend", itemRowHTML(false));
+        const last = list.lastElementChild.querySelector("input");
+        if (last) last.focus();
+      }
+      break;
+    }
+    case "removeItem": {
+      const list = document.getElementById("itemsList");
+      const row = button && button.closest(".item-row");
+      if (list && row) {
+        if (list.children.length > 1) {
+          const form = row.closest("form");
+          row.remove();
+          updateTotalPreview(form);
+        } else {
+          showToast("Il faut au moins une ligne.", "error");
+        }
+      }
+      break;
+    }
+    case "printCurrent": printCurrent(); break;
+    case "textInvoice": { const d = findDocument("invoice", id); if (d) showTextDialog(documentText(d, "invoice")); break; }
+    case "textQuote": { const d = findDocument("quote", id); if (d) showTextDialog(documentText(d, "quote")); break; }
+    case "captureMode": enterCaptureMode(); break;
+    case "exitCapture": exitCaptureMode(); break;
+    case "convertQuote": convertQuote(id); break;
+    case "exportData": exportData(); break;
+    case "importData": importData(); break;
+    case "copyBackup": copyBackup(); break;
+    case "restoreText": {
+      const area = document.getElementById("backupText");
+      restoreFromText(area ? area.value : "");
+      break;
+    }
+    default: console.warn("Action non reconnue :", action);
+  }
+}
+
+document.addEventListener("click", event => {
+  const button = event.target.closest("[data-action]");
+  if (!button) return;
+  handleAction(button.dataset.action, button.dataset.id, button);
+});
+
+document.addEventListener("submit", event => {
+  const form = event.target;
+  const kind = form.dataset ? form.dataset.form : "";
+  if (!kind) return;
+  event.preventDefault();
+  if (kind === "client") handleClientSubmit(form);
+  else if (kind === "document") handleDocumentSubmit(form);
+  else if (kind === "payment") handlePaymentSubmit(form);
+  else if (kind === "settings") handleSettingsSubmit(form);
+});
+
+document.addEventListener("input", event => {
+  const form = event.target.form;
+  if (form && form.dataset && form.dataset.form === "document") updateTotalPreview(form);
+});
+
+document.addEventListener("change", event => {
+  const target = event.target;
+  if (target.id === "logoFile") {
+    handleLogoFile(target.files && target.files[0]);
+    target.value = "";
+    return;
+  }
+  if (target.id === "importFile") {
+    handleImportFile(target.files && target.files[0]);
+    target.value = "";
+    return;
+  }
+  const form = target.form;
+  if (form && form.dataset && form.dataset.form === "payment" && target.name === "invoiceId") {
+    const option = target.options[target.selectedIndex];
+    const amountField = form.querySelector('[name="amount"]');
+    if (option && amountField) amountField.value = option.dataset.balance || "";
+  }
+});
+
+window.addEventListener("popstate", handleBack);
+
+window.addEventListener("error", event => {
+  showToast("Erreur : " + (event.message || "inconnue"), "error");
+});
+window.addEventListener("unhandledrejection", event => {
+  showToast("Erreur : " + ((event.reason && event.reason.message) || "inconnue"), "error");
+});
+
+function startApp() {
+  showDashboard();
+  registerServiceWorker();
+}
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", startApp, { once: true });
+} else {
+  startApp();
+}
+
+</script>
+</body>
+</html>
